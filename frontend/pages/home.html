@@ -33,86 +33,26 @@
     line-height: 1.5;
   }
 
-  /* ===== NAV ===== */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(24,24,31,0.94);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 60px;
+  /* ========== 1. フェードイン ========== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .nav-logo {
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
   }
-  .nav-logo-dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover, .nav-links a.active { color: var(--text); }
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .nav-avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: var(--bg3);
-    border: 0.5px solid var(--border-bright);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 600;
-    color: var(--accent);
-    cursor: pointer;
-  }
-  .btn-record {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 18px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .btn-record:hover { opacity: 0.85; }
+  .fade-up:nth-child(1) { animation-delay: 0.05s; }
+  .fade-up:nth-child(2) { animation-delay: 0.12s; }
+  .fade-up:nth-child(3) { animation-delay: 0.19s; }
+  .fade-up:nth-child(4) { animation-delay: 0.26s; }
+  .fade-up:nth-child(5) { animation-delay: 0.33s; }
 
-  /* ===== LAYOUT ===== */
-  .page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 40px 80px;
+  /* ========== 2. 煽りバナー点滅 ========== */
+  @keyframes alertPulse {
+    0%, 100% { border-color: rgba(255,79,79,0.35); background: rgba(232,26,26,0.08); }
+    50%       { border-color: rgba(255,79,79,0.70); background: rgba(232,26,26,0.16); }
   }
-
-  /* ===== ALERT ===== */
   .alert {
     background: rgba(232,26,26,0.08);
     border: 0.5px solid rgba(255,61,61,0.35);
@@ -122,129 +62,53 @@
     align-items: center;
     gap: 14px;
     margin-bottom: 36px;
-  }
-  .alert-icon { font-size: 18px; flex-shrink: 0; }
-  .alert-body { flex: 1; }
-  .alert-body strong { color: var(--accent2); font-size: 13px; font-weight: 600; }
-  .alert-body p { color: #c0c0cc; font-size: 12px; margin-top: 2px; }
-  .alert-cta {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent2);
-    background: rgba(255,61,61,0.12);
-    border: 0.5px solid rgba(255,61,61,0.3);
-    border-radius: 5px;
-    padding: 7px 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s;
-  }
-  .alert-cta:hover { background: rgba(255,61,61,0.22); }
-
-  /* ===== GRID ===== */
-  .grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .col-span-2 { grid-column: span 2; }
-
-  /* ===== CARD ===== */
-  .card {
-    background: var(--bg2);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-label::after {
-    content: '';
-    flex: 1;
-    height: 0.5px;
-    background: var(--border);
+    animation: alertPulse 2.4s ease-in-out infinite;
   }
 
-  /* ===== STREAK ===== */
+  /* ========== 3. 炎アイコン揺れ ========== */
+  @keyframes flameSway {
+    0%,100% { transform: rotate(-8deg) scale(1.0); }
+    25%     { transform: rotate( 8deg) scale(1.1); }
+    50%     { transform: rotate(-4deg) scale(1.05); }
+    75%     { transform: rotate( 6deg) scale(1.08); }
+  }
+  .flame-icon {
+    display: inline-block;
+    animation: flameSway 1.2s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  /* ========== 4. ストリーク数字カウントアップ（JSで制御） ========== */
   .streak-num {
     font-size: 72px;
     font-weight: 900;
     line-height: 1;
     color: var(--accent2);
     letter-spacing: -0.03em;
+    transition: transform 0.1s ease;
   }
-  .streak-unit {
-    font-size: 16px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-weight: 400;
+  .streak-num.pop {
+    animation: numPop 0.2s ease;
   }
-  .streak-warn {
-    margin-top: 16px;
-    font-size: 11px;
-    color: var(--accent2);
-    background: rgba(255,61,61,0.08);
-    border: 0.5px solid rgba(255,61,61,0.2);
-    border-radius: 5px;
-    padding: 7px 12px;
-    display: inline-block;
+  @keyframes numPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
   }
-  .streak-bar {
-    display: flex;
-    gap: 5px;
-    margin-top: 16px;
-  }
-  .sbar-dot {
-    height: 4px;
-    flex: 1;
-    border-radius: 99px;
-    background: var(--bg3);
-  }
-  .sbar-dot.done { background: var(--accent2); }
-  .sbar-dot.today { background: var(--accent); }
 
-  /* ===== RANKING ===== */
-  .rank-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .rtab {
-    font-size: 11px;
-    padding: 5px 13px;
+  /* ========== 5. バトルプログレスバー ========== */
+  .battle-fill {
+    height: 100%;
+    background: var(--accent2);
     border-radius: 99px;
-    border: 0.5px solid var(--border-bright);
-    color: var(--muted);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.02em;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .rtab:hover { color: var(--text); border-color: rgba(255,255,255,0.35); }
-  .rtab.active {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-    font-weight: 700;
+
+  /* ========== ランキング行スライドイン ========== */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
   }
   .rank-row {
     display: flex;
@@ -252,7 +116,12 @@
     gap: 12px;
     padding: 11px 0;
     border-bottom: 0.5px solid var(--border);
+    animation: slideIn 0.3s ease forwards;
   }
+  .rank-row:nth-child(1) { animation-delay: 0.02s; }
+  .rank-row:nth-child(2) { animation-delay: 0.07s; }
+  .rank-row:nth-child(3) { animation-delay: 0.12s; }
+  .rank-row:nth-child(4) { animation-delay: 0.17s; }
   .rank-row:last-child { border-bottom: none; }
   .rank-row.me {
     background: rgba(232,240,0,0.04);
@@ -260,182 +129,98 @@
     padding: 11px 24px;
     border-bottom: 0.5px solid rgba(232,240,0,0.1);
   }
-  .rnum {
-    width: 24px;
-    font-size: 13px;
-    font-weight: 700;
-    text-align: center;
-    color: var(--muted);
-    flex-shrink: 0;
-  }
-  .rnum.g { color: #f0c830; }
-  .rnum.s { color: #c0bfbe; }
-  .rnum.b { color: #cc7a44; }
-  .rav {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .rname { flex: 1; font-size: 13px; color: var(--text); }
-  .rme-tag {
-    font-size: 10px;
-    color: var(--accent);
-    border: 0.5px solid rgba(232,240,0,0.4);
-    border-radius: 3px;
-    padding: 1px 6px;
-    margin-left: 7px;
-  }
-  .rscore { font-size: 13px; font-weight: 600; color: var(--text); }
 
-  /* ===== BATTLE ===== */
-  .battle-vs {
-    display: flex;
-    align-items: flex-end;
-    gap: 0;
-    margin-bottom: 20px;
-  }
-  .bp { flex: 1; }
-  .bp-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .bp-score {
-    font-size: 44px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--text);
-  }
-  .bp-score.losing { color: var(--muted); }
-  .bp-score.winning { color: var(--accent); }
-  .bp-unit { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 4px; }
-  .vs-sep {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    padding: 0 16px 12px;
-    letter-spacing: 0.08em;
-  }
-  .battle-bar {
-    height: 3px;
-    background: var(--bg3);
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .battle-fill {
+  /* ========== ミッションバー ========== */
+  .mfill {
     height: 100%;
-    background: var(--accent2);
+    background: var(--accent3);
     border-radius: 99px;
-  }
-  .battle-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
-  .battle-hint {
-    font-size: 12px;
-    color: var(--accent2);
-    padding: 10px 14px;
-    background: rgba(255,61,61,0.07);
-    border: 0.5px solid rgba(255,61,61,0.2);
-    border-radius: 6px;
-    line-height: 1.6;
+    width: 0%;
+    transition: width 1s cubic-bezier(0.22,1,0.36,1);
   }
 
-  /* ===== FEED ===== */
-  .feed-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 0;
+  /* ========== 共通 ========== */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(24,24,31,0.94);
+    backdrop-filter: blur(12px);
     border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 60px;
   }
-  .feed-row:last-child { border-bottom: none; }
-  .fav {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .feed-text { flex: 1; font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .feed-text .name { color: var(--text); font-weight: 600; }
-  .feed-text .warn { color: var(--accent2); font-weight: 600; }
-  .feed-time { font-size: 10px; color: #6a6a80; margin-top: 3px; letter-spacing: 0.02em; }
-
-  /* ===== MISSION ===== */
-  .mission-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 0;
-    border-bottom: 0.5px solid var(--border);
-  }
-  .mission-row:last-child { border-bottom: none; }
-  .mcheck {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border-bright);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    font-size: 11px;
-  }
-  .mcheck.done { background: var(--accent3); border-color: var(--accent3); color: #000; }
-  .mname { flex: 1; font-size: 13px; color: var(--text); }
-  .mname.done { text-decoration: line-through; color: var(--muted); }
-  .mprog { font-size: 11px; color: var(--muted); text-align: right; }
-  .mbar { height: 2px; background: var(--bg3); border-radius: 99px; margin-top: 5px; }
-  .mfill { height: 100%; background: var(--accent3); border-radius: 99px; }
-
-  /* ===== GROWTH ===== */
-  .growth-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 0.5px solid var(--border);
-  }
-  .growth-row:last-child { border-bottom: none; }
-  .gname { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .gnums { display: flex; align-items: baseline; gap: 10px; }
-  .gold-val { font-size: 13px; color: #6a6a7a; text-decoration: line-through; }
-  .gnew-val { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-  .gpct {
-    margin-left: auto;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent3);
-    background: rgba(0,201,167,0.08);
-    border: 0.5px solid rgba(0,201,167,0.25);
-    border-radius: 5px;
-    padding: 4px 10px;
-  }
-
-  /* ===== STAT CARDS ===== */
-  .stat-num {
-    font-size: 38px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .stat-label-sm { font-size: 12px; color: var(--muted); margin-top: 6px; }
-  .stat-accent { color: var(--accent); }
-  .stat-rank { color: var(--text); }
-
-  @media (max-width: 900px) {
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-    .col-span-2 { grid-column: span 1; }
-    nav { padding: 0 20px; }
-    .page { padding: 24px 20px 60px; }
-    .nav-links { display: none; }
-  }
-  @media (max-width: 600px) {
-    .grid-3, .grid-2 { grid-template-columns: 1fr; }
-    .col-span-2 { grid-column: span 1; }
-    .bp-score { font-size: 32px; }
-  }
+  .nav-logo { font-size:17px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text); display:flex; align-items:center; gap:10px; }
+  .nav-logo-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; }
+  .nav-links { display:flex; align-items:center; gap:32px; list-style:none; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:13px; letter-spacing:0.04em; transition:color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--text); }
+  .nav-right { display:flex; align-items:center; gap:16px; }
+  .nav-avatar { width:34px; height:34px; border-radius:50%; background:var(--bg3); border:0.5px solid var(--border-bright); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--accent); cursor:pointer; }
+  .btn-record { background:var(--accent); color:#000; border:none; border-radius:6px; padding:8px 18px; font-size:12px; font-weight:700; letter-spacing:0.05em; cursor:pointer; transition:opacity 0.15s; }
+  .btn-record:hover { opacity:0.85; }
+  .page { max-width:1200px; margin:0 auto; padding:40px 40px 80px; }
+  .alert-icon { font-size:18px; flex-shrink:0; }
+  .alert-body { flex:1; }
+  .alert-body strong { color:var(--accent2); font-size:13px; font-weight:600; }
+  .alert-body p { color:#c0c0cc; font-size:12px; margin-top:2px; }
+  .alert-cta { font-size:12px; font-weight:600; color:var(--accent2); background:rgba(255,61,61,0.12); border:0.5px solid rgba(255,61,61,0.3); border-radius:5px; padding:7px 14px; cursor:pointer; white-space:nowrap; transition:background 0.15s; }
+  .alert-cta:hover { background:rgba(255,61,61,0.22); }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .col-span-2 { grid-column:span 2; }
+  .card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; position:relative; overflow:hidden; }
+  .card-label { font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .card-label::after { content:''; flex:1; height:0.5px; background:var(--border); }
+  .streak-unit { font-size:16px; color:var(--muted); margin-top:4px; font-weight:400; }
+  .streak-warn { margin-top:16px; font-size:11px; color:var(--accent2); background:rgba(255,61,61,0.08); border:0.5px solid rgba(255,61,61,0.2); border-radius:5px; padding:7px 12px; display:inline-block; }
+  .streak-bar { display:flex; gap:5px; margin-top:16px; }
+  .sbar-dot { height:4px; flex:1; border-radius:99px; background:var(--bg3); }
+  .sbar-dot.done { background:var(--accent2); }
+  .sbar-dot.today { background:var(--accent); }
+  .rank-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+  .rtab { font-size:11px; padding:5px 13px; border-radius:99px; border:0.5px solid var(--border-bright); color:var(--muted); background:transparent; cursor:pointer; transition:all 0.15s; letter-spacing:0.02em; font-family:var(--font-display); }
+  .rtab:hover { color:var(--text); border-color:rgba(255,255,255,0.35); }
+  .rtab.active { background:var(--accent); color:#000; border-color:var(--accent); font-weight:700; }
+  .rnum { width:24px; font-size:13px; font-weight:700; text-align:center; color:var(--muted); flex-shrink:0; }
+  .rnum.g { color:#f0c830; } .rnum.s { color:#c0bfbe; } .rnum.b { color:#cc7a44; }
+  .rav { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+  .rname { flex:1; font-size:13px; color:var(--text); }
+  .rme-tag { font-size:10px; color:var(--accent); border:0.5px solid rgba(232,240,0,0.4); border-radius:3px; padding:1px 6px; margin-left:7px; }
+  .rscore { font-size:13px; font-weight:600; color:var(--text); }
+  .battle-vs { display:flex; align-items:flex-end; gap:0; margin-bottom:20px; }
+  .bp { flex:1; }
+  .bp-label { font-size:11px; color:var(--muted); margin-bottom:4px; }
+  .bp-score { font-size:44px; font-weight:900; letter-spacing:-0.03em; line-height:1; color:var(--text); }
+  .bp-score.losing { color:var(--muted); }
+  .bp-score.winning { color:var(--accent); }
+  .bp-unit { font-size:13px; color:var(--muted); font-weight:400; margin-left:4px; }
+  .vs-sep { font-size:12px; font-weight:700; color:var(--muted); padding:0 16px 12px; letter-spacing:0.08em; }
+  .battle-bar { height:3px; background:var(--bg3); border-radius:99px; overflow:hidden; margin-bottom:8px; }
+  .battle-meta { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:14px; }
+  .battle-hint { font-size:12px; color:var(--accent2); padding:10px 14px; background:rgba(255,61,61,0.07); border:0.5px solid rgba(255,61,61,0.2); border-radius:6px; line-height:1.6; }
+  .feed-row { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:0.5px solid var(--border); }
+  .feed-row:last-child { border-bottom:none; }
+  .fav { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+  .feed-text { flex:1; font-size:13px; color:var(--muted); line-height:1.5; }
+  .feed-text .name { color:var(--text); font-weight:600; }
+  .feed-text .warn { color:var(--accent2); font-weight:600; }
+  .feed-time { font-size:10px; color:#6a6a80; margin-top:3px; letter-spacing:0.02em; }
+  .mission-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:0.5px solid var(--border); }
+  .mission-row:last-child { border-bottom:none; }
+  .mcheck { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--border-bright); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:11px; }
+  .mcheck.done { background:var(--accent3); border-color:var(--accent3); color:#000; }
+  .mname { flex:1; font-size:13px; color:var(--text); }
+  .mname.done { text-decoration:line-through; color:var(--muted); }
+  .mprog { font-size:11px; color:var(--muted); text-align:right; }
+  .mbar { height:2px; background:var(--bg3); border-radius:99px; margin-top:4px; overflow:hidden; }
+  .growth-row { display:flex; align-items:center; gap:16px; padding:14px 0; border-bottom:0.5px solid var(--border); }
+  .growth-row:last-child { border-bottom:none; }
+  .gname { font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .gnums { display:flex; align-items:baseline; gap:10px; }
+  .gold-val { font-size:13px; color:#6a6a7a; text-decoration:line-through; }
+  .gnew-val { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.02em; }
+  .gpct { margin-left:auto; font-size:13px; font-weight:700; color:var(--accent3); background:rgba(0,201,167,0.08); border:0.5px solid rgba(0,201,167,0.25); border-radius:5px; padding:4px 10px; }
+  @media (max-width:900px) { .grid-3 { grid-template-columns:1fr 1fr; } .col-span-2 { grid-column:span 1; } nav { padding:0 20px; } .page { padding:24px 20px 60px; } .nav-links { display:none; } }
+  @media (max-width:600px) { .grid-3, .grid-2 { grid-template-columns:1fr; } .col-span-2 { grid-column:span 1; } .bp-score { font-size:32px; } }
 </style>
 </head>
 <body>
@@ -447,9 +232,9 @@
   </div>
   <ul class="nav-links">
     <li><a href="#" class="active">ホーム</a></li>
-    <li><a href="#">ランキング</a></li>
-    <li><a href="#">バトル</a></li>
-    <li><a href="#">フレンド</a></li>
+    <li><a href="ranking.html">ランキング</a></li>
+    <li><a href="battle.html">バトル</a></li>
+    <li><a href="friends.html">フレンド</a></li>
     <li><a href="#">統計</a></li>
   </ul>
   <div class="nav-right">
@@ -460,9 +245,9 @@
 
 <div class="page">
 
-  <!-- 煽りアラート -->
-  <div class="alert">
-    <span class="alert-icon">🔥</span>
+  <!-- ① 煽りアラート（点滅アニメーション） -->
+  <div class="alert fade-up">
+    <span class="alert-icon"><span class="flame-icon">🔥</span></span>
     <div class="alert-body">
       <strong>タケシがあなたを抜きました</strong>
       <p>あと15回の腕立てで再逆転できます。タケシは今日まだ運動していません。</p>
@@ -470,20 +255,20 @@
     <div class="alert-cta">今すぐ記録 →</div>
   </div>
 
-  <!-- 上段: 3カラム -->
+  <!-- 上段 -->
   <div class="grid-3">
 
-    <!-- ストリーク -->
-    <div class="card">
+    <!-- ③ ストリーク（カウントアップ + 炎） -->
+    <div class="card fade-up">
       <div class="card-label">連続記録</div>
-      <div class="streak-num">18</div>
+      <div class="streak-num" id="streak-num">0</div>
       <div class="streak-unit">日継続中</div>
-      <div class="streak-warn">今日サボると記録が終了します</div>
+      <div class="streak-warn"><span class="flame-icon">🔥</span> 今日サボると記録が終了します</div>
       <div class="streak-bar" id="streak-bar"></div>
     </div>
 
-    <!-- 今週ランキング -->
-    <div class="card col-span-2">
+    <!-- ランキング（スライドイン） -->
+    <div class="card col-span-2 fade-up">
       <div class="card-label">今日の腕立てランキング</div>
       <div class="rank-tabs" id="rtabs">
         <button class="rtab active" onclick="switchRank(this,'nara')">奈良県</button>
@@ -496,11 +281,11 @@
 
   </div>
 
-  <!-- 中段: 2カラム -->
+  <!-- 中段 -->
   <div class="grid-2">
 
-    <!-- バトル -->
-    <div class="card">
+    <!-- ⑤ バトル（プログレスバーアニメーション） -->
+    <div class="card fade-up">
       <div class="card-label">今週のバトル <span style="margin-left:auto;color:var(--accent2);font-weight:700;font-size:10px;">残り2日</span></div>
       <div class="battle-vs">
         <div class="bp">
@@ -513,7 +298,7 @@
           <div class="bp-score winning">350<span class="bp-unit">回</span></div>
         </div>
       </div>
-      <div class="battle-bar"><div class="battle-fill" style="width:48%"></div></div>
+      <div class="battle-bar"><div class="battle-fill" id="battle-fill"></div></div>
       <div class="battle-meta">
         <span>あなた 48%</span>
         <span>タケシ 52%</span>
@@ -522,7 +307,7 @@
     </div>
 
     <!-- フレンド活動 -->
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">フレンドの活動</div>
       <div class="feed-row">
         <div class="fav" style="background:#0d3d28;color:#00c9a7">山</div>
@@ -556,11 +341,11 @@
 
   </div>
 
-  <!-- 下段: 2カラム -->
+  <!-- 下段 -->
   <div class="grid-2">
 
-    <!-- ミッション -->
-    <div class="card">
+    <!-- ④ ミッション（プログレスバーアニメーション） -->
+    <div class="card fade-up">
       <div class="card-label">今日のミッション <span style="margin-left:auto;color:var(--accent3)">達成率 50%</span></div>
       <div class="mission-row">
         <div class="mcheck done">✓</div>
@@ -573,7 +358,7 @@
         <div class="mcheck"></div>
         <div style="flex:1">
           <div class="mname">スクワット 50回</div>
-          <div class="mbar"><div class="mfill" style="width:40%"></div></div>
+          <div class="mbar"><div class="mfill" id="mfill-1" data-width="40"></div></div>
         </div>
         <div class="mprog">20 / 50</div>
       </div>
@@ -581,14 +366,14 @@
         <div class="mcheck"></div>
         <div style="flex:1">
           <div class="mname">懸垂 10回</div>
-          <div class="mbar"><div class="mfill" style="width:0%"></div></div>
+          <div class="mbar"><div class="mfill" id="mfill-2" data-width="0"></div></div>
         </div>
         <div class="mprog">0 / 10</div>
       </div>
     </div>
 
     <!-- 今月の成長 -->
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">今月の成長</div>
       <div class="growth-row">
         <div>
@@ -626,7 +411,7 @@
 </div>
 
 <script>
-  /* ===== ストリークバー ===== */
+  /* ① ストリークバー */
   const bar = document.getElementById('streak-bar');
   for (let i = 0; i < 10; i++) {
     const d = document.createElement('div');
@@ -634,7 +419,34 @@
     bar.appendChild(d);
   }
 
-  /* ===== ランキング ===== */
+  /* ② ストリーク数字カウントアップ */
+  const TARGET = 18;
+  const streakEl = document.getElementById('streak-num');
+  let current = 0;
+  const duration = 900;
+  const step = duration / TARGET;
+  const timer = setInterval(() => {
+    current++;
+    streakEl.textContent = current;
+    streakEl.classList.remove('pop');
+    void streakEl.offsetWidth; // reflow
+    streakEl.classList.add('pop');
+    if (current >= TARGET) clearInterval(timer);
+  }, step);
+
+  /* ③ バトルプログレスバー — 少し遅らせてアニメーション */
+  setTimeout(() => {
+    document.getElementById('battle-fill').style.width = '48%';
+  }, 400);
+
+  /* ④ ミッションバー */
+  setTimeout(() => {
+    document.querySelectorAll('.mfill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 600);
+
+  /* ⑤ ランキング */
   const RANKS = {
     nara: [
       {r:1,n:'タケシ',s:230,bg:'#2e2200',tc:'#f0c830'},
@@ -662,7 +474,8 @@
   const nc = ['','g','s','b'];
 
   function renderRank(key) {
-    document.getElementById('rank-list').innerHTML = RANKS[key].map(d => `
+    const list = document.getElementById('rank-list');
+    list.innerHTML = RANKS[key].map(d => `
       <div class="rank-row${d.me ? ' me' : ''}">
         <span class="rnum ${nc[d.r] || ''}">${d.r}</span>
         <div class="rav" style="background:${d.bg};color:${d.tc}">${d.n[0]}</div>
