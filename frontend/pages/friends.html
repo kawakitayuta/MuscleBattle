@@ -11,13 +11,38 @@
 :root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInRow{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes invitePulse{0%,100%{border-color:rgba(232,240,0,0.2);background:rgba(232,240,0,0.05)}50%{border-color:rgba(232,240,0,0.4);background:rgba(232,240,0,0.10)}}
+@keyframes feedSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes avatarPop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes warnFlash{0%,100%{color:#ff8080}50%{color:var(--accent2)}}
+@keyframes btnHover{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+.fade-up{opacity:0;animation:fadeUp 0.5s ease forwards;}
+.fade-up:nth-child(1){animation-delay:0.05s}.fade-up:nth-child(2){animation-delay:0.12s}.fade-up:nth-child(3){animation-delay:0.19s}.fade-up:nth-child(4){animation-delay:0.26s}.fade-up:nth-child(5){animation-delay:0.33s}
+.invite-box{animation:invitePulse 3s ease-in-out infinite;}
+.friend-card{opacity:0;}
+.friend-card.slide{animation:slideInRow 0.35s ease forwards;}
+.feed-row{opacity:0;}
+.feed-row.feed-in{animation:feedSlide 0.4s ease forwards;}
+.fav{animation:avatarPop 0.4s cubic-bezier(0.22,1,0.36,1) both;}
+.feed-text .warn{animation:warnFlash 2s ease-in-out infinite;}
+.btn-battle{transition:all 0.15s;}
+.btn-battle:hover{transform:translateY(-1px);}
+.btn-follow{transition:all 0.15s;}
+.btn-follow:hover{transform:translateY(-1px);}
+.btn-copy{transition:all 0.15s;}
+.btn-copy:hover{transform:scale(1.04);}
+
 nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;}
 .nav-logo{font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:10px;}
 .nav-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
 .nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color 0.2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--text);}
-.nav-right{display:flex;align-items:center;gap:16px;}
 .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
 .page{max-width:900px;margin:0 auto;padding:40px 40px 80px;}
 .page-title{font-size:24px;font-weight:700;margin-bottom:28px;}
@@ -25,17 +50,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .card-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .card-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-
-/* 招待 */
 .invite-box{background:rgba(232,240,0,0.05);border:0.5px solid rgba(232,240,0,0.2);border-radius:10px;padding:20px;margin-bottom:16px;text-align:center;}
 .invite-title{font-size:15px;font-weight:700;margin-bottom:6px;}
 .invite-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
 .invite-link-row{display:flex;gap:8px;}
 .invite-link{flex:1;background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--muted);font-family:var(--font);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn-copy{background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;transition:opacity 0.15s;}
-.btn-copy:hover{opacity:0.85;}
-
-/* フレンドカード */
+.btn-copy{background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap;}
 .friend-card{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:0.5px solid var(--border);}
 .friend-card:last-child{border-bottom:none;}
 .fav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
@@ -43,15 +63,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .fname{font-size:14px;font-weight:600;color:var(--text);}
 .fmeta{font-size:11px;color:var(--muted);margin-top:2px;}
 .fstreak{font-size:11px;color:var(--accent2);background:rgba(255,79,79,0.1);border-radius:4px;padding:2px 7px;flex-shrink:0;}
-.fscore{text-align:right;flex-shrink:0;}
-.fscore-num{font-size:15px;font-weight:700;color:var(--text);}
-.fscore-label{font-size:10px;color:var(--muted);}
-.btn-battle{background:rgba(255,79,79,0.1);border:0.5px solid rgba(255,79,79,0.3);border-radius:6px;color:var(--accent2);font-size:11px;font-weight:700;font-family:var(--font);padding:6px 12px;cursor:pointer;transition:background 0.15s;flex-shrink:0;}
-.btn-battle:hover{background:rgba(255,79,79,0.2);}
-.btn-follow{background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:6px;color:var(--muted);font-size:11px;font-weight:600;font-family:var(--font);padding:6px 12px;cursor:pointer;transition:all 0.15s;flex-shrink:0;}
-.btn-follow:hover{color:var(--text);}
-
-/* 活動フィード */
+.btn-battle{background:rgba(255,79,79,0.1);border:0.5px solid rgba(255,79,79,0.3);border-radius:6px;color:var(--accent2);font-size:11px;font-weight:700;font-family:var(--font);padding:6px 12px;cursor:pointer;flex-shrink:0;}
+.btn-follow{background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:6px;color:var(--muted);font-size:11px;font-weight:600;font-family:var(--font);padding:6px 12px;cursor:pointer;flex-shrink:0;}
 .feed-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
 .feed-row:last-child{border-bottom:none;}
 .feed-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
@@ -61,15 +74,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .feed-text .warn{color:var(--accent2);font-weight:600;}
 .feed-text .good{color:var(--accent3);font-weight:600;}
 .feed-time{font-size:10px;color:#5a5a6a;margin-top:3px;}
-
-/* 検索 */
 .search-row{display:flex;gap:8px;margin-bottom:16px;}
 .search-input{flex:1;background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:8px;color:var(--text);font-family:var(--font);font-size:14px;padding:10px 14px;outline:none;transition:border-color 0.2s;}
 .search-input:focus{border-color:var(--accent);}
 .search-input::placeholder{color:var(--muted);}
 .btn-search{background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:13px;padding:10px 16px;cursor:pointer;transition:all 0.15s;}
 .btn-search:hover{color:var(--text);}
-
 @media(max-width:700px){nav{padding:0 16px;}.nav-links{display:none;}.page{padding:24px 16px 60px;}.grid2{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -77,20 +87,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 <nav>
   <div class="nav-logo"><div class="nav-dot"></div>MuscleBattle</div>
   <ul class="nav-links">
-    <li><a href="muscle_battle_home.html">ホーム</a></li>
+    <li><a href="home.html">ホーム</a></li>
     <li><a href="record.html">記録</a></li>
     <li><a href="ranking.html">ランキング</a></li>
     <li><a href="battle.html">バトル</a></li>
     <li><a href="#" class="active">フレンド</a></li>
   </ul>
-  <div class="nav-right"><div class="nav-avatar">田</div></div>
+  <div class="nav-avatar">田</div>
 </nav>
-
 <div class="page">
-  <div class="page-title">フレンド</div>
+  <div class="page-title fade-up">フレンド</div>
 
-  <!-- 招待 -->
-  <div class="invite-box">
+  <div class="invite-box fade-up">
     <div class="invite-title">友達を招待してバトルを始めよう</div>
     <div class="invite-sub">招待リンクを送るだけで、登録した瞬間にバトルが始まります。<br>招待した人が登録するとあなたのストリークが+3日されます。</div>
     <div class="invite-link-row">
@@ -100,116 +108,75 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
   </div>
 
   <div class="grid2">
-    <!-- フレンドリスト -->
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">フレンド (4)</div>
-      <div class="friend-card">
-        <div class="fav" style="background:#2e2200;color:#f0c830">タ</div>
-        <div class="finfo">
-          <div class="fname">タケシ</div>
-          <div class="fmeta">腕立て 350回 · 今日記録済み</div>
-        </div>
+      <div class="friend-card" style="animation-delay:0.1s">
+        <div class="fav" style="background:#2e2200;color:#f0c830;animation-delay:0.1s">タ</div>
+        <div class="finfo"><div class="fname">タケシ</div><div class="fmeta">腕立て 350回 · 今日記録済み</div></div>
         <span class="fstreak">🔥 12日</span>
         <button class="btn-battle" onclick="location.href='battle.html'">バトル中</button>
       </div>
-      <div class="friend-card">
-        <div class="fav" style="background:#0d3d28;color:#00c9a7">山</div>
-        <div class="finfo">
-          <div class="fname">山田さん</div>
-          <div class="fmeta">腹筋 100回 · 3分前</div>
-        </div>
+      <div class="friend-card" style="animation-delay:0.18s">
+        <div class="fav" style="background:#0d3d28;color:#00c9a7;animation-delay:0.18s">山</div>
+        <div class="finfo"><div class="fname">山田さん</div><div class="fmeta">腹筋 100回 · 3分前</div></div>
         <span class="fstreak">🔥 8日</span>
         <button class="btn-battle">バトルする</button>
       </div>
-      <div class="friend-card">
-        <div class="fav" style="background:#332508;color:#e8b800">佐</div>
-        <div class="finfo">
-          <div class="fname">佐藤さん</div>
-          <div class="fmeta">スクワット 80回 · 2時間前</div>
-        </div>
+      <div class="friend-card" style="animation-delay:0.26s">
+        <div class="fav" style="background:#332508;color:#e8b800;animation-delay:0.26s">佐</div>
+        <div class="finfo"><div class="fname">佐藤さん</div><div class="fmeta">スクワット 80回 · 2時間前</div></div>
         <span class="fstreak">🔥 21日</span>
         <button class="btn-battle">バトルする</button>
       </div>
-      <div class="friend-card">
-        <div class="fav" style="background:#0d1f33;color:#5badff">伊</div>
-        <div class="finfo">
-          <div class="fname">伊藤さん</div>
-          <div class="fmeta">今日はまだ記録なし</div>
-        </div>
+      <div class="friend-card" style="animation-delay:0.34s">
+        <div class="fav" style="background:#0d1f33;color:#5badff;animation-delay:0.34s">伊</div>
+        <div class="finfo"><div class="fname">伊藤さん</div><div class="fmeta">今日はまだ記録なし</div></div>
         <span class="fstreak" style="color:var(--muted);background:var(--bg3)">3日</span>
         <button class="btn-battle">バトルする</button>
       </div>
     </div>
 
-    <!-- 活動フィード -->
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">フレンドの活動</div>
       <div class="feed-row">
         <div class="feed-av" style="background:#0d3d28;color:#00c9a7">山</div>
-        <div class="feed-body">
-          <div class="feed-text"><span class="name">山田さん</span>が<span class="good">腹筋100回</span>を達成</div>
-          <div class="feed-time">3分前</div>
-        </div>
+        <div class="feed-body"><div class="feed-text"><span class="name">山田さん</span>が<span class="good">腹筋100回</span>を達成</div><div class="feed-time">3分前</div></div>
       </div>
       <div class="feed-row">
         <div class="feed-av" style="background:#332508;color:#e8b800">佐</div>
-        <div class="feed-body">
-          <div class="feed-text"><span class="name">佐藤さん</span>が<span class="good">21日連続</span>を達成</div>
-          <div class="feed-time">12分前</div>
-        </div>
+        <div class="feed-body"><div class="feed-text"><span class="name">佐藤さん</span>が<span class="good">21日連続</span>を達成</div><div class="feed-time">12分前</div></div>
       </div>
       <div class="feed-row">
         <div class="feed-av" style="background:#2e2200;color:#f0c830">タ</div>
-        <div class="feed-body">
-          <div class="feed-text"><span class="warn">タケシがあなたを追い抜きました</span> — 腕立て350回</div>
-          <div class="feed-time">28分前</div>
-        </div>
+        <div class="feed-body"><div class="feed-text"><span class="warn">タケシがあなたを追い抜きました</span> — 腕立て350回</div><div class="feed-time">28分前</div></div>
       </div>
       <div class="feed-row">
         <div class="feed-av" style="background:#0d1f33;color:#5badff">伊</div>
-        <div class="feed-body">
-          <div class="feed-text"><span class="name">伊藤さん</span>がスクワット<span class="good">自己新記録</span>を更新 — 200回</div>
-          <div class="feed-time">1時間前</div>
-        </div>
-      </div>
-      <div class="feed-row">
-        <div class="feed-av" style="background:#2e2200;color:#f0c830">タ</div>
-        <div class="feed-body">
-          <div class="feed-text"><span class="name">タケシ</span>が今日の腕立てランキング<span class="good">1位</span>を獲得</div>
-          <div class="feed-time">2時間前</div>
-        </div>
+        <div class="feed-body"><div class="feed-text"><span class="name">伊藤さん</span>がスクワット<span class="good">自己新記録</span> — 200回</div><div class="feed-time">1時間前</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ユーザー検索 -->
-  <div class="card">
+  <div class="card fade-up">
     <div class="card-label">ユーザーを探す</div>
     <div class="search-row">
-      <input class="search-input" placeholder="ユーザー名で検索..." id="search-q">
+      <input class="search-input" placeholder="ユーザー名で検索...">
       <button class="btn-search">検索</button>
     </div>
     <div class="friend-card">
       <div class="fav" style="background:#1e1a2e;color:#9090e0">ケ</div>
-      <div class="finfo">
-        <div class="fname">ケン</div>
-        <div class="fmeta">奈良県 · 今日の腕立て 150回</div>
-      </div>
+      <div class="finfo"><div class="fname">ケン</div><div class="fmeta">奈良県 · 今日の腕立て 150回</div></div>
       <span class="fstreak">🔥 5日</span>
       <button class="btn-follow">+ フレンドになる</button>
     </div>
     <div class="friend-card">
       <div class="fav" style="background:#2a1a2a;color:#c080c0">ジ</div>
-      <div class="finfo">
-        <div class="fname">ジュン</div>
-        <div class="fmeta">奈良県 · 今日の腕立て 80回</div>
-      </div>
+      <div class="finfo"><div class="fname">ジュン</div><div class="fmeta">奈良県 · 今日の腕立て 80回</div></div>
       <span class="fstreak" style="color:var(--muted);background:var(--bg3)">4日</span>
       <button class="btn-follow">+ フレンドになる</button>
     </div>
   </div>
 </div>
-
 <script>
 function copyLink(){
   navigator.clipboard.writeText(document.getElementById('inv-link').value);
@@ -217,6 +184,11 @@ function copyLink(){
   btn.textContent='コピー済み!';
   setTimeout(()=>btn.textContent='コピー',1800);
 }
+// フレンドカード・フィードをずらしてスライドイン
+setTimeout(()=>{
+  document.querySelectorAll('.friend-card').forEach((el,i)=>setTimeout(()=>el.classList.add('slide'),i*80));
+  document.querySelectorAll('.feed-row').forEach((el,i)=>setTimeout(()=>el.classList.add('feed-in'),200+i*100));
+},100);
 </script>
 </body>
 </html>

@@ -11,24 +11,45 @@
 :root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes scorePop{0%{transform:scale(0.7);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes battleGlow{0%,100%{border-color:rgba(255,79,79,0.3);box-shadow:0 0 0 0 rgba(255,79,79,0)}50%{border-color:rgba(255,79,79,0.6);box-shadow:0 0 20px rgba(255,79,79,0.08)}}
+@keyframes barFill{from{width:0%}to{width:48%}}
+@keyframes timerTick{0%{transform:scale(1)}10%{transform:scale(1.08)}20%{transform:scale(1)}}
+@keyframes slideInRow{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes hintPulse{0%,100%{background:rgba(232,240,0,0.06)}50%{background:rgba(232,240,0,0.12)}}
+
+.fade-up{opacity:0;animation:fadeUp 0.5s ease forwards;}
+.fade-up:nth-child(1){animation-delay:0.05s}.fade-up:nth-child(2){animation-delay:0.12s}.fade-up:nth-child(3){animation-delay:0.19s}.fade-up:nth-child(4){animation-delay:0.26s}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.4s ease infinite;}
+.battle-hero{animation:battleGlow 2.8s ease-in-out infinite;}
+.player-score{opacity:0;animation:scorePop 0.6s cubic-bezier(0.22,1,0.36,1) forwards;}
+.player-score.you{animation-delay:0.5s}
+.player-score.rival{animation-delay:0.7s}
+.battle-fill{height:100%;background:var(--text);border-radius:99px;width:0%;animation:barFill 1.2s cubic-bezier(0.22,1,0.36,1) 0.9s forwards;}
+.timer-num{animation:timerTick 1s ease infinite;}
+.reversal-hint{animation:hintPulse 3s ease-in-out infinite;}
+.log-row{animation:slideInRow 0.3s ease forwards;}
+.log-row:nth-child(1){animation-delay:0.05s}.log-row:nth-child(2){animation-delay:0.10s}.log-row:nth-child(3){animation-delay:0.15s}.log-row:nth-child(4){animation-delay:0.20s}.log-row:nth-child(5){animation-delay:0.25s}
+.btn-primary{transition:opacity 0.15s,transform 0.15s;}
+.btn-primary:hover{opacity:0.85;transform:translateY(-1px);}
+
 nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;}
 .nav-logo{font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:10px;}
 .nav-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
 .nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color 0.2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--text);}
-.nav-right{display:flex;align-items:center;gap:16px;}
 .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
 .page{max-width:900px;margin:0 auto;padding:40px 40px 80px;}
 .card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
 .card-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .card-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
-
-/* バトルヒーロー */
 .battle-hero{background:var(--bg2);border:0.5px solid rgba(255,79,79,0.3);border-radius:12px;padding:32px;margin-bottom:16px;text-align:center;}
 .battle-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--accent2);background:rgba(255,79,79,0.1);border:0.5px solid rgba(255,79,79,0.3);border-radius:99px;padding:4px 12px;margin-bottom:24px;}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.4s ease infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 .battle-title{font-size:20px;font-weight:700;margin-bottom:8px;}
 .battle-meta{font-size:12px;color:var(--muted);margin-bottom:32px;}
 .vs-area{display:flex;align-items:flex-end;justify-content:center;gap:24px;margin-bottom:24px;}
@@ -39,49 +60,36 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .player-block.right .player-avatar{margin-left:auto;}
 .player-name{font-size:14px;font-weight:600;margin-bottom:4px;}
 .player-score{font-size:52px;font-weight:900;letter-spacing:-0.03em;line-height:1;}
-.player-score.you{color:var(--text);}
-.player-score.rival{color:var(--accent2);}
 .score-unit{font-size:16px;color:var(--muted);font-weight:400;}
 .vs-sep{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:0.08em;padding-bottom:20px;}
 .battle-bar-wrap{margin-bottom:12px;}
 .battle-bar{height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;}
-.battle-fill{height:100%;background:var(--text);border-radius:99px;transition:width 0.8s ease;}
 .battle-pcts{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px;}
 .timer-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;}
 .timer-block{background:var(--bg3);border-radius:8px;padding:10px 16px;text-align:center;}
-.timer-num{font-size:24px;font-weight:700;color:var(--text);}
 .timer-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
 .timer-sep{font-size:20px;color:var(--border-bright);font-weight:700;padding-bottom:14px;}
 .reversal-hint{background:rgba(232,240,0,0.06);border:0.5px solid rgba(232,240,0,0.2);border-radius:8px;padding:14px 18px;font-size:13px;color:#d4dc00;line-height:1.6;}
-
-/* 日別グラフ */
+.action-row{display:flex;gap:12px;}
+.btn-primary{flex:1;background:var(--accent);color:#000;border:none;border-radius:8px;padding:14px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;}
+.btn-secondary{background:var(--bg2);color:var(--muted);border:0.5px solid var(--border-bright);border-radius:8px;padding:14px 20px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.15s;}
+.btn-secondary:hover{color:var(--text);}
 .day-chart{display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:8px;}
 .day-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .day-bars{display:flex;align-items:flex-end;gap:2px;height:80px;}
-.day-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:height 0.4s ease;}
+.day-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;width:0;transition:height 0.8s cubic-bezier(0.22,1,0.36,1);}
 .day-bar.you{background:var(--text);}
 .day-bar.rival{background:var(--accent2);}
 .day-label{font-size:10px;color:var(--muted);}
 .chart-legend{display:flex;gap:16px;font-size:11px;color:var(--muted);}
 .leg{display:flex;align-items:center;gap:6px;}
 .leg-dot{width:10px;height:10px;border-radius:2px;}
-
-/* アクション */
-.action-row{display:flex;gap:12px;}
-.btn-primary{flex:1;background:var(--accent);color:#000;border:none;border-radius:8px;padding:14px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:opacity 0.15s;}
-.btn-primary:hover{opacity:0.85;}
-.btn-secondary{background:var(--bg2);color:var(--muted);border:0.5px solid var(--border-bright);border-radius:8px;padding:14px 20px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.15s;}
-.btn-secondary:hover{color:var(--text);}
-
-/* 履歴 */
-.log-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+.log-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);opacity:0;}
 .log-row:last-child{border-bottom:none;}
 .log-day{font-size:11px;color:var(--muted);width:40px;flex-shrink:0;}
 .log-you{flex:1;font-size:13px;font-weight:600;color:var(--text);}
 .log-rival{text-align:right;font-size:13px;font-weight:600;color:var(--accent2);}
-.log-win{color:var(--accent3);}
-.log-lose{color:var(--accent2);}
-
+.log-win{color:var(--accent3)}.log-lose{color:var(--accent2);}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:700px){nav{padding:0 16px;}.nav-links{display:none;}.page{padding:24px 16px 60px;}.vs-area{gap:12px;}.player-score{font-size:36px;}.grid2{grid-template-columns:1fr;}}
 </style>
@@ -90,22 +98,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 <nav>
   <div class="nav-logo"><div class="nav-dot"></div>MuscleBattle</div>
   <ul class="nav-links">
-    <li><a href="muscle_battle_home.html">ホーム</a></li>
+    <li><a href="home.html">ホーム</a></li>
     <li><a href="record.html">記録</a></li>
     <li><a href="ranking.html">ランキング</a></li>
     <li><a href="#" class="active">バトル</a></li>
     <li><a href="friends.html">フレンド</a></li>
   </ul>
-  <div class="nav-right"><div class="nav-avatar">田</div></div>
+  <div class="nav-avatar">田</div>
 </nav>
-
 <div class="page">
-
   <div class="battle-hero">
     <div><span class="battle-status"><span class="status-dot"></span>LIVE</span></div>
     <div class="battle-title">週間腕立て対決</div>
     <div class="battle-meta">6月16日（月）〜 6月22日（日）・7日間バトル</div>
-
     <div class="vs-area">
       <div class="player-block">
         <div class="player-avatar" style="background:#1e2a08;color:#e8f000">田</div>
@@ -119,12 +124,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
         <div class="player-score rival">350<span class="score-unit">回</span></div>
       </div>
     </div>
-
     <div class="battle-bar-wrap">
-      <div class="battle-bar"><div class="battle-fill" id="bar-fill" style="width:48%"></div></div>
+      <div class="battle-bar"><div class="battle-fill"></div></div>
       <div class="battle-pcts"><span>あなた 48%</span><span>タケシ 52%</span></div>
     </div>
-
     <div class="timer-row">
       <div class="timer-block"><div class="timer-num" id="t-d">2</div><div class="timer-label">日</div></div>
       <div class="timer-sep">:</div>
@@ -134,18 +137,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
       <div class="timer-sep">:</div>
       <div class="timer-block"><div class="timer-num" id="t-s">08</div><div class="timer-label">秒</div></div>
     </div>
-
     <div class="reversal-hint">あと <strong>30回</strong> の腕立てで逆転。タケシは今日まだ運動していません — 今がチャンスです。</div>
   </div>
-
-  <div class="action-row" style="margin-bottom:16px">
+  <div class="action-row fade-up" style="margin-bottom:16px">
     <button class="btn-primary" onclick="location.href='record.html'">今すぐ記録して逆転する</button>
     <button class="btn-secondary">シェア</button>
     <button class="btn-secondary">降参</button>
   </div>
-
   <div class="grid2">
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">日別推移</div>
       <div class="day-chart" id="day-chart"></div>
       <div class="chart-legend">
@@ -153,60 +153,46 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
         <div class="leg"><div class="leg-dot" style="background:var(--accent2)"></div>タケシ</div>
       </div>
     </div>
-
-    <div class="card">
+    <div class="card fade-up">
       <div class="card-label">日別記録</div>
       <div class="log-row"><span class="log-day">月</span><span class="log-you">60回</span><span class="log-rival log-lose">80回</span></div>
       <div class="log-row"><span class="log-day">火</span><span class="log-you">50回</span><span class="log-rival log-lose">70回</span></div>
       <div class="log-row"><span class="log-day">水</span><span class="log-you">70回</span><span class="log-rival log-win">60回</span></div>
       <div class="log-row"><span class="log-day">木</span><span class="log-you log-win">80回</span><span class="log-rival">50回</span></div>
       <div class="log-row"><span class="log-day">金</span><span class="log-you">60回</span><span class="log-rival log-lose">90回</span></div>
-      <div class="log-row"><span class="log-day">土</span><span class="log-you log-win" style="color:var(--muted)">記録中...</span><span class="log-rival">—</span></div>
     </div>
   </div>
-
 </div>
-
 <script>
-// カウントダウン
 function tick(){
-  const end = new Date();
-  end.setDate(end.getDate()+2);
-  end.setHours(23,59,59);
-  const diff = end - new Date();
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
+  const end=new Date();end.setDate(end.getDate()+2);end.setHours(23,59,59);
+  const diff=end-new Date();
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
   document.getElementById('t-d').textContent=d;
   document.getElementById('t-h').textContent=String(h).padStart(2,'0');
   document.getElementById('t-m').textContent=String(m).padStart(2,'0');
   document.getElementById('t-s').textContent=String(s).padStart(2,'0');
 }
-tick(); setInterval(tick,1000);
+tick();setInterval(tick,1000);
 
-// 日別グラフ
+// グラフ — 遅延してアニメーション
 const days=['月','火','水','木','金','土'];
-const you=[60,50,70,80,60,0];
-const rival=[80,70,60,50,90,0];
+const you=[60,50,70,80,60,0],rival=[80,70,60,50,90,0];
 const max=Math.max(...you,...rival,1);
 const chart=document.getElementById('day-chart');
 days.forEach((d,i)=>{
-  const wrap=document.createElement('div');
-  wrap.className='day-bar-wrap';
-  const barsEl=document.createElement('div');
-  barsEl.className='day-bars';
-  const yb=document.createElement('div');
-  yb.className='day-bar you';
-  yb.style.height=(you[i]/max*74+3)+'px';
-  const rb=document.createElement('div');
-  rb.className='day-bar rival';
-  rb.style.height=(rival[i]/max*74+3)+'px';
-  barsEl.appendChild(yb);barsEl.appendChild(rb);
-  const label=document.createElement('div');
-  label.className='day-label';label.textContent=d;
-  wrap.appendChild(barsEl);wrap.appendChild(label);
+  const wrap=document.createElement('div');wrap.className='day-bar-wrap';
+  const bars=document.createElement('div');bars.className='day-bars';
+  const yb=document.createElement('div');yb.className='day-bar you';yb.style.height='3px';
+  const rb=document.createElement('div');rb.className='day-bar rival';rb.style.height='3px';
+  bars.appendChild(yb);bars.appendChild(rb);
+  const label=document.createElement('div');label.className='day-label';label.textContent=d;
+  wrap.appendChild(bars);wrap.appendChild(label);
   chart.appendChild(wrap);
+  setTimeout(()=>{
+    yb.style.height=(you[i]/max*74+3)+'px';
+    rb.style.height=(rival[i]/max*74+3)+'px';
+  },800+i*80);
 });
 </script>
 </body>

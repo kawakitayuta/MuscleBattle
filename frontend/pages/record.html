@@ -11,13 +11,36 @@
 :root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes flameSway{0%,100%{transform:rotate(-8deg) scale(1)}25%{transform:rotate(8deg) scale(1.1)}50%{transform:rotate(-4deg) scale(1.05)}75%{transform:rotate(6deg) scale(1.08)}}
+@keyframes slideInRow{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes totalPop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes alertPulse{0%,100%{border-color:rgba(255,79,79,0.25);background:rgba(255,79,79,0.07)}50%{border-color:rgba(255,79,79,0.5);background:rgba(255,79,79,0.14)}}
+@keyframes chipBounce{0%{transform:scale(1)}40%{transform:scale(0.92)}70%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+.fade-up{opacity:0;animation:fadeUp 0.5s ease forwards;}
+.fade-up:nth-child(1){animation-delay:0.05s}
+.fade-up:nth-child(2){animation-delay:0.12s}
+.fade-up:nth-child(3){animation-delay:0.19s}
+.fade-up:nth-child(4){animation-delay:0.26s}
+.fade-up:nth-child(5){animation-delay:0.33s}
+.flame-icon{display:inline-block;animation:flameSway 1.2s ease-in-out infinite;transform-origin:bottom center;}
+.rival-bar{animation:alertPulse 2.4s ease-in-out infinite;}
+.total-val{transition:all 0.2s ease;}
+.total-val.pop{animation:totalPop 0.25s ease;}
+.chip.active{animation:chipBounce 0.3s ease;}
+.set-row-anim{animation:slideInRow 0.25s ease forwards;}
+.btn-primary{transition:opacity 0.15s,transform 0.15s;}
+.btn-primary:hover{opacity:0.85;transform:translateY(-1px);}
+
 nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;}
 .nav-logo{font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:10px;}
 .nav-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
 .nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:0.04em;transition:color 0.2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--text);}
-.nav-right{display:flex;align-items:center;gap:16px;}
 .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
 .page{max-width:760px;margin:0 auto;padding:40px 40px 80px;}
 .page-title{font-size:24px;font-weight:700;margin-bottom:6px;}
@@ -26,10 +49,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .card-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .card-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
 .exercise-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
-.chip{padding:7px 14px;border-radius:99px;border:0.5px solid var(--border-bright);font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.15s;background:transparent;}
+.chip{padding:7px 14px;border-radius:99px;border:0.5px solid var(--border-bright);font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.15s;background:transparent;font-family:var(--font);}
 .chip:hover{color:var(--text);border-color:rgba(255,255,255,0.35);}
 .chip.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
-.custom-input-row{display:flex;gap:8px;margin-bottom:0;}
+.custom-input-row{display:flex;gap:8px;}
 .form-input{background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:8px;color:var(--text);font-family:var(--font);font-size:14px;padding:10px 14px;outline:none;transition:border-color 0.2s;}
 .form-input:focus{border-color:var(--accent);}
 .form-input::placeholder{color:var(--muted);}
@@ -48,8 +71,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 .memo-input:focus{border-color:var(--accent);}
 .memo-input::placeholder{color:var(--muted);}
 .submit-row{display:flex;gap:12px;margin-top:24px;}
-.btn-primary{flex:1;background:var(--accent);color:#000;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:0.04em;transition:opacity 0.15s;}
-.btn-primary:hover{opacity:0.85;}
+.btn-primary{flex:1;background:var(--accent);color:#000;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:0.04em;}
 .btn-secondary{background:var(--bg2);color:var(--muted);border:0.5px solid var(--border-bright);border-radius:8px;padding:14px 20px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.15s;}
 .btn-secondary:hover{color:var(--text);}
 .rival-bar{background:rgba(255,79,79,0.07);border:0.5px solid rgba(255,79,79,0.25);border-radius:10px;padding:12px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
@@ -66,25 +88,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
 <nav>
   <div class="nav-logo"><div class="nav-dot"></div>MuscleBattle</div>
   <ul class="nav-links">
-    <li><a href="muscle_battle_home.html">ホーム</a></li>
+    <li><a href="home.html">ホーム</a></li>
     <li><a href="#" class="active">記録</a></li>
     <li><a href="ranking.html">ランキング</a></li>
     <li><a href="battle.html">バトル</a></li>
     <li><a href="friends.html">フレンド</a></li>
   </ul>
-  <div class="nav-right"><div class="nav-avatar">田</div></div>
+  <div class="nav-avatar">田</div>
 </nav>
-
 <div class="page">
-  <div class="page-title">今日の記録</div>
-  <div class="page-sub">2026年6月20日（土）</div>
+  <div class="page-title fade-up">今日の記録</div>
+  <div class="page-sub fade-up">2026年6月20日（土）</div>
 
-  <div class="rival-bar">
-    <span style="font-size:18px;">🔥</span>
+  <div class="rival-bar fade-up">
+    <span style="font-size:18px"><span class="flame-icon">🔥</span></span>
     <div class="rival-text"><strong>タケシがあなたを抜きました。</strong> あと30回の腕立てで再逆転できます。</div>
   </div>
 
-  <div class="card">
+  <div class="card fade-up">
     <div class="card-label">種目を選ぶ</div>
     <div class="exercise-chips" id="chips">
       <div class="chip active" onclick="selectChip(this)">腕立て伏せ</div>
@@ -100,53 +121,35 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
     </div>
   </div>
 
-  <div class="card">
+  <div class="card fade-up">
     <div class="card-label">セットを記録</div>
     <div class="total-row">
-      <div class="total-card">
-        <div class="total-label">合計回数</div>
-        <div class="total-val" id="total-reps">0 回</div>
-      </div>
-      <div class="total-card">
-        <div class="total-label">セット数</div>
-        <div class="total-val" id="total-sets">0 セット</div>
-      </div>
-      <div class="total-card">
-        <div class="total-label">ボリューム</div>
-        <div class="total-val" id="total-vol">0 kg</div>
-      </div>
+      <div class="total-card"><div class="total-label">合計回数</div><div class="total-val" id="total-reps">0 回</div></div>
+      <div class="total-card"><div class="total-label">セット数</div><div class="total-val" id="total-sets">0 セット</div></div>
+      <div class="total-card"><div class="total-label">ボリューム</div><div class="total-val" id="total-vol">0 kg</div></div>
     </div>
     <table class="sets-table">
-      <thead>
-        <tr>
-          <th style="width:50px">SET</th>
-          <th>重量 (kg)</th>
-          <th>回数</th>
-          <th style="width:40px"></th>
-        </tr>
-      </thead>
+      <thead><tr><th style="width:50px">SET</th><th>重量 (kg)</th><th>回数</th><th style="width:40px"></th></tr></thead>
       <tbody id="sets-body"></tbody>
     </table>
     <button class="add-set-btn" onclick="addSet()">＋ セットを追加</button>
   </div>
 
-  <div class="card">
+  <div class="card fade-up">
     <div class="card-label">メモ（任意）</div>
     <textarea class="memo-input" rows="3" placeholder="フォームの気づき、体調など..."></textarea>
   </div>
 
-  <div class="submit-row">
+  <div class="submit-row fade-up">
     <button class="btn-secondary">キャンセル</button>
     <button class="btn-primary" onclick="save()">記録を保存して公開</button>
   </div>
 </div>
-
 <script>
-let sets = [{kg:0,reps:10},{kg:0,reps:10},{kg:0,reps:10}];
-
+let sets=[{kg:0,reps:10},{kg:0,reps:10},{kg:0,reps:10}];
 function renderSets(){
-  document.getElementById('sets-body').innerHTML = sets.map((s,i)=>`
-    <tr>
+  document.getElementById('sets-body').innerHTML=sets.map((s,i)=>`
+    <tr class="set-row-anim">
       <td><span class="set-num">${i+1}</span></td>
       <td style="text-align:center"><input class="num-input" type="number" min="0" value="${s.kg}" oninput="sets[${i}].kg=+this.value;calcTotal()"></td>
       <td style="text-align:center"><input class="num-input" type="number" min="0" value="${s.reps}" oninput="sets[${i}].reps=+this.value;calcTotal()"></td>
@@ -154,47 +157,31 @@ function renderSets(){
     </tr>`).join('');
   calcTotal();
 }
-
-function addSet(){
-  sets.push({kg:sets[sets.length-1]?.kg||0,reps:10});
-  renderSets();
-}
-
-function delSet(i){
-  if(sets.length===1)return;
-  sets.splice(i,1);
-  renderSets();
-}
-
+function addSet(){sets.push({kg:sets[sets.length-1]?.kg||0,reps:10});renderSets();}
+function delSet(i){if(sets.length===1)return;sets.splice(i,1);renderSets();}
 function calcTotal(){
   const reps=sets.reduce((a,s)=>a+s.reps,0);
   const vol=sets.reduce((a,s)=>a+(s.kg*s.reps),0);
-  document.getElementById('total-reps').textContent=reps+' 回';
-  document.getElementById('total-sets').textContent=sets.length+' セット';
-  document.getElementById('total-vol').textContent=vol+' kg';
+  const pop=el=>{el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');};
+  const r=document.getElementById('total-reps');
+  const sv=document.getElementById('total-sets');
+  const v=document.getElementById('total-vol');
+  r.textContent=reps+' 回';sv.textContent=sets.length+' セット';v.textContent=vol+' kg';
+  pop(r);pop(sv);pop(v);
 }
-
 function selectChip(el){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
 }
-
 function addCustom(){
-  const v=document.getElementById('custom-ex').value.trim();
-  if(!v)return;
+  const val=document.getElementById('custom-ex').value.trim();
+  if(!val)return;
   const c=document.createElement('div');
-  c.className='chip active';
-  c.textContent=v;
-  c.onclick=()=>selectChip(c);
+  c.className='chip active';c.textContent=val;c.onclick=()=>selectChip(c);
   document.getElementById('chips').appendChild(c);
-  selectChip(c);
-  document.getElementById('custom-ex').value='';
+  selectChip(c);document.getElementById('custom-ex').value='';
 }
-
-function save(){
-  alert('記録を保存しました！ランキングに反映されます。');
-}
-
+function save(){alert('記録を保存しました！ランキングに反映されます。');}
 renderSets();
 </script>
 </body>
