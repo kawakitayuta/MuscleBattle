@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MuscleBattle — ランキング</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;}
+nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;}
+.nav-logo{font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:10px;}
+.nav-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
+.page{max-width:900px;margin:0 auto;padding:40px 40px 80px;}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:24px;font-weight:700;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{padding:7px 14px;border-radius:99px;border:0.5px solid var(--border-bright);font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.15s;background:transparent;font-family:var(--font);}
+.chip:hover{color:var(--text);}
+.chip.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.tabs-row{display:flex;gap:0;border:0.5px solid var(--border-bright);border-radius:8px;overflow:hidden;margin-bottom:16px;width:fit-content;}
+.tab{padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:var(--font);transition:all 0.15s;}
+.tab.active{background:var(--bg3);color:var(--text);}
+
+/* 上位3名ポディウム */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:12px;margin-bottom:28px;padding:28px 0 0;}
+.podium-item{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.podium-av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.podium-name{font-size:13px;font-weight:600;color:var(--text);}
+.podium-score{font-size:12px;color:var(--muted);}
+.podium-stand{display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;font-size:20px;font-weight:900;}
+.podium-rank{font-size:11px;font-weight:700;letter-spacing:0.06em;margin-top:2px;}
+
+/* ランキングリスト */
+.rank-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.rank-row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.15s;}
+.rank-row:last-child{border-bottom:none;}
+.rank-row:hover{background:var(--bg3);}
+.rank-row.me{background:rgba(232,240,0,0.04);border-left:2px solid var(--accent);}
+.rnum{width:28px;font-size:14px;font-weight:700;text-align:center;flex-shrink:0;color:var(--muted);}
+.rnum.g{color:#f0c830;}.rnum.s{color:#c0bfbe;}.rnum.b{color:#cc7a44;}
+.rav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.rinfo{flex:1;min-width:0;}
+.rname{font-size:14px;font-weight:500;color:var(--text);}
+.rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.rme-tag{font-size:10px;color:var(--accent);border:0.5px solid rgba(232,240,0,0.4);border-radius:3px;padding:1px 6px;margin-left:6px;}
+.rscore-col{text-align:right;flex-shrink:0;}
+.rscore{font-size:15px;font-weight:700;color:var(--text);}
+.rscore-label{font-size:10px;color:var(--muted);}
+.rstreak{font-size:11px;color:var(--accent2);background:rgba(255,79,79,0.1);border-radius:4px;padding:2px 7px;flex-shrink:0;}
+.mypos-bar{background:rgba(232,240,0,0.06);border:0.5px solid rgba(232,240,0,0.2);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;}
+.mypos-left{color:var(--muted);}
+.mypos-right{color:var(--accent);font-weight:700;}
+@media(max-width:700px){nav{padding:0 16px;}.nav-links{display:none;}.page{padding:24px 16px 60px;}.podium{padding-top:16px;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo"><div class="nav-dot"></div>MuscleBattle</div>
+  <ul class="nav-links">
+    <li><a href="muscle_battle_home.html">ホーム</a></li>
+    <li><a href="record.html">記録</a></li>
+    <li><a href="#" class="active">ランキング</a></li>
+    <li><a href="battle.html">バトル</a></li>
+    <li><a href="friends.html">フレンド</a></li>
+  </ul>
+  <div class="nav-right"><div class="nav-avatar">田</div></div>
+</nav>
+
+<div class="page">
+  <div class="page-head">
+    <div class="page-title">ランキング</div>
+    <div class="filter-row" id="filter-chips">
+      <button class="chip active" onclick="switchFilter(this,'nara')">奈良県</button>
+      <button class="chip" onclick="switchFilter(this,'nation')">全国</button>
+      <button class="chip" onclick="switchFilter(this,'age')">同年代</button>
+      <button class="chip" onclick="switchFilter(this,'new')">新入社員</button>
+    </div>
+  </div>
+
+  <div class="tabs-row">
+    <button class="tab active" onclick="switchPeriod(this,'today')">今日</button>
+    <button class="tab" onclick="switchPeriod(this,'week')">今週</button>
+    <button class="tab" onclick="switchPeriod(this,'month')">今月</button>
+  </div>
+
+  <div class="mypos-bar">
+    <span class="mypos-left">あなたの現在順位</span>
+    <span class="mypos-right" id="mypos">#8位 — 60回</span>
+  </div>
+
+  <!-- ポディウム -->
+  <div class="podium" id="podium"></div>
+
+  <!-- 4位以下リスト -->
+  <div class="rank-card" id="rank-list"></div>
+</div>
+
+<script>
+const DATA = {
+  nara:{
+    today:[
+      {r:1,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'ユウタ',i:'ユ',s:180,streak:8,bg:'#2a2a2a',tc:'#c0bfbe'},
+      {r:3,n:'ケン',i:'ケ',s:150,streak:5,bg:'#2e1a0a',tc:'#cc7a44'},
+      {r:4,n:'ショウ',i:'シ',s:130,streak:3,bg:'#1a2a2a',tc:'#00c9a7'},
+      {r:5,n:'リョウ',i:'リ',s:110,streak:7,bg:'#1e1a2e',tc:'#9090e0'},
+      {r:6,n:'コウ',i:'コ',s:90,streak:2,bg:'#2a2a1a',tc:'#c0c080'},
+      {r:7,n:'ジュン',i:'ジ',s:80,streak:4,bg:'#2a1a2a',tc:'#c080c0'},
+      {r:8,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
+    ],
+    mypos:'#8位 — 60回',
+  },
+  nation:{
+    today:[
+      {r:1,n:'山本',i:'山',s:410,streak:22,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'中村',i:'中',s:390,streak:15,bg:'#2a2a2a',tc:'#c0bfbe'},
+      {r:3,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e1a0a',tc:'#cc7a44'},
+      {r:4,n:'鈴木',i:'鈴',s:220,streak:9,bg:'#1a2a2a',tc:'#00c9a7'},
+      {r:5,n:'佐藤',i:'佐',s:200,streak:6,bg:'#1e1a2e',tc:'#9090e0'},
+      {r:42,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
+    ],
+    mypos:'#42位 — 60回',
+  },
+  age:{
+    today:[
+      {r:1,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'ユウタ',i:'ユ',s:180,streak:8,bg:'#2a2a2a',tc:'#c0bfbe'},
+      {r:3,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
+      {r:4,n:'リョウ',i:'リ',s:50,streak:3,bg:'#1e1a2e',tc:'#9090e0'},
+    ],
+    mypos:'#3位 — 60回',
+  },
+  new:{
+    today:[
+      {r:1,n:'ケン',i:'ケ',s:150,streak:5,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
+      {r:3,n:'リョウ',i:'リ',s:45,streak:3,bg:'#2a2a2a',tc:'#c0bfbe'},
+    ],
+    mypos:'#2位 — 60回',
+  },
+};
+
+let curFilter='nara', curPeriod='today';
+
+function getRows(){return DATA[curFilter][curPeriod]||DATA[curFilter]['today'];}
+
+function renderPodium(rows){
+  const top3=rows.slice(0,3);
+  const order=[1,0,2];
+  const sizes=[44,56,44];
+  const heights=[64,88,52];
+  const colors=['#c0bfbe','#f0c830','#cc7a44'];
+  const labels=['2位','1位','3位'];
+  document.getElementById('podium').innerHTML = order.map(idx=>{
+    const d=top3[idx];
+    if(!d)return '';
+    return `<div class="podium-item">
+      <div class="podium-av" style="width:${sizes[idx]}px;height:${sizes[idx]}px;background:${d.bg};color:${d.tc};font-size:${sizes[idx]*0.35}px">${d.i}</div>
+      <div class="podium-name">${d.n}</div>
+      <div class="podium-score">${d.s}回</div>
+      <div class="podium-stand" style="width:90px;height:${heights[idx]}px;background:${colors[idx]}20;border:0.5px solid ${colors[idx]}40;color:${colors[idx]}">
+        <span class="podium-rank">${labels[idx]}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderList(rows){
+  const rest=rows.slice(3);
+  const nc=['','g','s','b'];
+  document.getElementById('rank-list').innerHTML=rest.map(d=>`
+    <div class="rank-row${d.me?' me':''}">
+      <span class="rnum ${nc[d.r]||''}">${d.r}</span>
+      <div class="rav" style="background:${d.bg};color:${d.tc}">${d.i}</div>
+      <div class="rinfo">
+        <div class="rname">${d.n}${d.me?'<span class="rme-tag">あなた</span>':''}</div>
+        <div class="rsub">🔥 ${d.streak}日連続</div>
+      </div>
+      <div class="rscore-col">
+        <div class="rscore">${d.s}回</div>
+        <div class="rscore-label">今日</div>
+      </div>
+    </div>`).join('');
+}
+
+function render(){
+  const rows=getRows();
+  document.getElementById('mypos').textContent=DATA[curFilter].mypos;
+  renderPodium(rows);
+  renderList(rows);
+}
+
+function switchFilter(el,key){
+  document.querySelectorAll('#filter-chips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  curFilter=key;render();
+}
+function switchPeriod(el,key){
+  document.querySelectorAll('.tabs-row .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  curPeriod=key;render();
+}
+
+render();
+</script>
+</body>
+</html>

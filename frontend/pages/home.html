@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MuscleBattle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #18181f;
+    --bg2: #22222c;
+    --bg3: #2c2c38;
+    --border: rgba(255,255,255,0.10);
+    --border-bright: rgba(255,255,255,0.22);
+    --text: #f2f2f5;
+    --muted: #a0a0b0;
+    --accent: #e8f000;
+    --accent2: #ff4f4f;
+    --accent3: #00c9a7;
+    --font-display: 'Inter', 'Noto Sans JP', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(24,24,31,0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 60px;
+  }
+  .nav-logo {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 0.5px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .btn-record {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-record:hover { opacity: 0.85; }
+
+  /* ===== LAYOUT ===== */
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+  }
+
+  /* ===== ALERT ===== */
+  .alert {
+    background: rgba(232,26,26,0.08);
+    border: 0.5px solid rgba(255,61,61,0.35);
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+  .alert-body { flex: 1; }
+  .alert-body strong { color: var(--accent2); font-size: 13px; font-weight: 600; }
+  .alert-body p { color: #c0c0cc; font-size: 12px; margin-top: 2px; }
+  .alert-cta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(255,61,61,0.12);
+    border: 0.5px solid rgba(255,61,61,0.3);
+    border-radius: 5px;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .alert-cta:hover { background: rgba(255,61,61,0.22); }
+
+  /* ===== GRID ===== */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .col-span-2 { grid-column: span 2; }
+
+  /* ===== CARD ===== */
+  .card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ===== STREAK ===== */
+  .streak-num {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent2);
+    letter-spacing: -0.03em;
+  }
+  .streak-unit {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .streak-warn {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(255,61,61,0.08);
+    border: 0.5px solid rgba(255,61,61,0.2);
+    border-radius: 5px;
+    padding: 7px 12px;
+    display: inline-block;
+  }
+  .streak-bar {
+    display: flex;
+    gap: 5px;
+    margin-top: 16px;
+  }
+  .sbar-dot {
+    height: 4px;
+    flex: 1;
+    border-radius: 99px;
+    background: var(--bg3);
+  }
+  .sbar-dot.done { background: var(--accent2); }
+  .sbar-dot.today { background: var(--accent); }
+
+  /* ===== RANKING ===== */
+  .rank-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .rtab {
+    font-size: 11px;
+    padding: 5px 13px;
+    border-radius: 99px;
+    border: 0.5px solid var(--border-bright);
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .rtab:hover { color: var(--text); border-color: rgba(255,255,255,0.35); }
+  .rtab.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .rank-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-row.me {
+    background: rgba(232,240,0,0.04);
+    margin: 0 -24px;
+    padding: 11px 24px;
+    border-bottom: 0.5px solid rgba(232,240,0,0.1);
+  }
+  .rnum {
+    width: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .rnum.g { color: #f0c830; }
+  .rnum.s { color: #c0bfbe; }
+  .rnum.b { color: #cc7a44; }
+  .rav {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rname { flex: 1; font-size: 13px; color: var(--text); }
+  .rme-tag {
+    font-size: 10px;
+    color: var(--accent);
+    border: 0.5px solid rgba(232,240,0,0.4);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 7px;
+  }
+  .rscore { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* ===== BATTLE ===== */
+  .battle-vs {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+  .bp { flex: 1; }
+  .bp-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .bp-score {
+    font-size: 44px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .bp-score.losing { color: var(--muted); }
+  .bp-score.winning { color: var(--accent); }
+  .bp-unit { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .vs-sep {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 0 16px 12px;
+    letter-spacing: 0.08em;
+  }
+  .battle-bar {
+    height: 3px;
+    background: var(--bg3);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .battle-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 99px;
+  }
+  .battle-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .battle-hint {
+    font-size: 12px;
+    color: var(--accent2);
+    padding: 10px 14px;
+    background: rgba(255,61,61,0.07);
+    border: 0.5px solid rgba(255,61,61,0.2);
+    border-radius: 6px;
+    line-height: 1.6;
+  }
+
+  /* ===== FEED ===== */
+  .feed-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .feed-row:last-child { border-bottom: none; }
+  .fav {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .feed-text { flex: 1; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .feed-text .name { color: var(--text); font-weight: 600; }
+  .feed-text .warn { color: var(--accent2); font-weight: 600; }
+  .feed-time { font-size: 10px; color: #6a6a80; margin-top: 3px; letter-spacing: 0.02em; }
+
+  /* ===== MISSION ===== */
+  .mission-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .mission-row:last-child { border-bottom: none; }
+  .mcheck {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+  .mcheck.done { background: var(--accent3); border-color: var(--accent3); color: #000; }
+  .mname { flex: 1; font-size: 13px; color: var(--text); }
+  .mname.done { text-decoration: line-through; color: var(--muted); }
+  .mprog { font-size: 11px; color: var(--muted); text-align: right; }
+  .mbar { height: 2px; background: var(--bg3); border-radius: 99px; margin-top: 5px; }
+  .mfill { height: 100%; background: var(--accent3); border-radius: 99px; }
+
+  /* ===== GROWTH ===== */
+  .growth-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .growth-row:last-child { border-bottom: none; }
+  .gname { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .gnums { display: flex; align-items: baseline; gap: 10px; }
+  .gold-val { font-size: 13px; color: #6a6a7a; text-decoration: line-through; }
+  .gnew-val { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+  .gpct {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent3);
+    background: rgba(0,201,167,0.08);
+    border: 0.5px solid rgba(0,201,167,0.25);
+    border-radius: 5px;
+    padding: 4px 10px;
+  }
+
+  /* ===== STAT CARDS ===== */
+  .stat-num {
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .stat-label-sm { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .stat-accent { color: var(--accent); }
+  .stat-rank { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .col-span-2 { grid-column: span 1; }
+    nav { padding: 0 20px; }
+    .page { padding: 24px 20px 60px; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    .col-span-2 { grid-column: span 1; }
+    .bp-score { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    MuscleBattle
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">ホーム</a></li>
+    <li><a href="#">ランキング</a></li>
+    <li><a href="#">バトル</a></li>
+    <li><a href="#">フレンド</a></li>
+    <li><a href="#">統計</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-record">+ 記録する</button>
+    <div class="nav-avatar">田</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- 煽りアラート -->
+  <div class="alert">
+    <span class="alert-icon">🔥</span>
+    <div class="alert-body">
+      <strong>タケシがあなたを抜きました</strong>
+      <p>あと15回の腕立てで再逆転できます。タケシは今日まだ運動していません。</p>
+    </div>
+    <div class="alert-cta">今すぐ記録 →</div>
+  </div>
+
+  <!-- 上段: 3カラム -->
+  <div class="grid-3">
+
+    <!-- ストリーク -->
+    <div class="card">
+      <div class="card-label">連続記録</div>
+      <div class="streak-num">18</div>
+      <div class="streak-unit">日継続中</div>
+      <div class="streak-warn">今日サボると記録が終了します</div>
+      <div class="streak-bar" id="streak-bar"></div>
+    </div>
+
+    <!-- 今週ランキング -->
+    <div class="card col-span-2">
+      <div class="card-label">今日の腕立てランキング</div>
+      <div class="rank-tabs" id="rtabs">
+        <button class="rtab active" onclick="switchRank(this,'nara')">奈良県</button>
+        <button class="rtab" onclick="switchRank(this,'nation')">全国</button>
+        <button class="rtab" onclick="switchRank(this,'age')">同年代</button>
+        <button class="rtab" onclick="switchRank(this,'new')">新入社員</button>
+      </div>
+      <div id="rank-list"></div>
+    </div>
+
+  </div>
+
+  <!-- 中段: 2カラム -->
+  <div class="grid-2">
+
+    <!-- バトル -->
+    <div class="card">
+      <div class="card-label">今週のバトル <span style="margin-left:auto;color:var(--accent2);font-weight:700;font-size:10px;">残り2日</span></div>
+      <div class="battle-vs">
+        <div class="bp">
+          <div class="bp-label">あなた</div>
+          <div class="bp-score losing">320<span class="bp-unit">回</span></div>
+        </div>
+        <div class="vs-sep">vs</div>
+        <div class="bp" style="text-align:right">
+          <div class="bp-label">タケシ</div>
+          <div class="bp-score winning">350<span class="bp-unit">回</span></div>
+        </div>
+      </div>
+      <div class="battle-bar"><div class="battle-fill" style="width:48%"></div></div>
+      <div class="battle-meta">
+        <span>あなた 48%</span>
+        <span>タケシ 52%</span>
+      </div>
+      <div class="battle-hint">あと30回で逆転。タケシは今日まだ運動していません。今がチャンスです。</div>
+    </div>
+
+    <!-- フレンド活動 -->
+    <div class="card">
+      <div class="card-label">フレンドの活動</div>
+      <div class="feed-row">
+        <div class="fav" style="background:#0d3d28;color:#00c9a7">山</div>
+        <div>
+          <div class="feed-text"><span class="name">山田さん</span>が腹筋100回を達成</div>
+          <div class="feed-time">3分前</div>
+        </div>
+      </div>
+      <div class="feed-row">
+        <div class="fav" style="background:#332508;color:#e8b800">佐</div>
+        <div>
+          <div class="feed-text"><span class="name">佐藤さん</span>が7日連続を達成</div>
+          <div class="feed-time">12分前</div>
+        </div>
+      </div>
+      <div class="feed-row">
+        <div class="fav" style="background:#3a1010;color:#ff6b6b">鈴</div>
+        <div>
+          <div class="feed-text"><span class="warn">鈴木さんがあなたを追い抜きました</span></div>
+          <div class="feed-time">28分前</div>
+        </div>
+      </div>
+      <div class="feed-row">
+        <div class="fav" style="background:#0d1f33;color:#5badff">伊</div>
+        <div>
+          <div class="feed-text"><span class="name">伊藤さん</span>が新記録を更新 — スクワット200回</div>
+          <div class="feed-time">1時間前</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 下段: 2カラム -->
+  <div class="grid-2">
+
+    <!-- ミッション -->
+    <div class="card">
+      <div class="card-label">今日のミッション <span style="margin-left:auto;color:var(--accent3)">達成率 50%</span></div>
+      <div class="mission-row">
+        <div class="mcheck done">✓</div>
+        <div style="flex:1">
+          <div class="mname done">腕立て 30回</div>
+        </div>
+        <div class="mprog" style="color:var(--accent3)">達成!</div>
+      </div>
+      <div class="mission-row">
+        <div class="mcheck"></div>
+        <div style="flex:1">
+          <div class="mname">スクワット 50回</div>
+          <div class="mbar"><div class="mfill" style="width:40%"></div></div>
+        </div>
+        <div class="mprog">20 / 50</div>
+      </div>
+      <div class="mission-row">
+        <div class="mcheck"></div>
+        <div style="flex:1">
+          <div class="mname">懸垂 10回</div>
+          <div class="mbar"><div class="mfill" style="width:0%"></div></div>
+        </div>
+        <div class="mprog">0 / 10</div>
+      </div>
+    </div>
+
+    <!-- 今月の成長 -->
+    <div class="card">
+      <div class="card-label">今月の成長</div>
+      <div class="growth-row">
+        <div>
+          <div class="gname">腕立て</div>
+          <div class="gnums">
+            <span class="gold-val">500回</span>
+            <span class="gnew-val">2,100回</span>
+          </div>
+        </div>
+        <div class="gpct">+320%</div>
+      </div>
+      <div class="growth-row">
+        <div>
+          <div class="gname">スクワット</div>
+          <div class="gnums">
+            <span class="gold-val">200回</span>
+            <span class="gnew-val">980回</span>
+          </div>
+        </div>
+        <div class="gpct">+390%</div>
+      </div>
+      <div class="growth-row">
+        <div>
+          <div class="gname">総ボリューム</div>
+          <div class="gnums">
+            <span class="gold-val">8,400kg</span>
+            <span class="gnew-val">31,200kg</span>
+          </div>
+        </div>
+        <div class="gpct">+271%</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ===== ストリークバー ===== */
+  const bar = document.getElementById('streak-bar');
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div');
+    d.className = 'sbar-dot' + (i < 9 ? ' done' : ' today');
+    bar.appendChild(d);
+  }
+
+  /* ===== ランキング ===== */
+  const RANKS = {
+    nara: [
+      {r:1,n:'タケシ',s:230,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'ユウタ',s:180,bg:'#2a2a2a',tc:'#c0c0c0'},
+      {r:3,n:'ケン',s:150,bg:'#2e1a0a',tc:'#cc7a44'},
+      {r:8,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
+    ],
+    nation: [
+      {r:1,n:'山本',s:410,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'中村',s:390,bg:'#2a2a2a',tc:'#c0c0c0'},
+      {r:3,n:'タケシ',s:230,bg:'#2e1a0a',tc:'#cc7a44'},
+      {r:42,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
+    ],
+    age: [
+      {r:1,n:'タケシ',s:230,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'ユウタ',s:180,bg:'#2a2a2a',tc:'#c0c0c0'},
+      {r:3,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
+    ],
+    new: [
+      {r:1,n:'ケン',s:150,bg:'#2e2200',tc:'#f0c830'},
+      {r:2,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
+      {r:3,n:'リョウ',s:45,bg:'#2a2a2a',tc:'#c0c0c0'},
+    ],
+  };
+  const nc = ['','g','s','b'];
+
+  function renderRank(key) {
+    document.getElementById('rank-list').innerHTML = RANKS[key].map(d => `
+      <div class="rank-row${d.me ? ' me' : ''}">
+        <span class="rnum ${nc[d.r] || ''}">${d.r}</span>
+        <div class="rav" style="background:${d.bg};color:${d.tc}">${d.n[0]}</div>
+        <span class="rname">${d.n}${d.me ? '<span class="rme-tag">あなた</span>' : ''}</span>
+        <span class="rscore">${d.s}回</span>
+      </div>`).join('');
+  }
+
+  function switchRank(el, key) {
+    document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderRank(key);
+  }
+
+  renderRank('nara');
+</script>
+</body>
+</html>

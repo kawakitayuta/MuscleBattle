@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+*.suo
+
+# C# ビルド成果物（後で使う）
+backend/bin/
+backend/obj/
+backend/*.user
+
+# 環境変数（APIキーなどは絶対コミットしない）
+.env
+*.env.local

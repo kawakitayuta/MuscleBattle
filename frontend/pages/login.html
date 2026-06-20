@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MuscleBattle — ログイン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.5;}
+.split{display:flex;min-height:100vh;}
+.left{flex:1;background:var(--bg2);border-right:0.5px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:60px;}
+.right{width:480px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:60px;}
+.logo{font-size:20px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:60px;}
+.logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;}
+.hero-tag{font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+.hero-title{font-size:46px;font-weight:900;line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px;}
+.hero-title span{color:var(--accent);}
+.hero-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:420px;margin-bottom:40px;}
+.stats-row{display:flex;gap:32px;}
+.stat-item{}
+.stat-num{font-size:30px;font-weight:900;color:var(--text);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+.tab-row{display:flex;gap:0;border:0.5px solid var(--border-bright);border-radius:8px;overflow:hidden;margin-bottom:28px;}
+.tab{flex:1;padding:11px 0;font-size:13px;font-weight:600;text-align:center;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:var(--font);transition:all 0.15s;}
+.tab.active{background:var(--accent);color:#000;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0.06em;margin-bottom:6px;display:block;}
+.form-input{width:100%;background:var(--bg3);border:0.5px solid var(--border-bright);border-radius:8px;color:var(--text);font-family:var(--font);font-size:14px;padding:12px 14px;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--accent);}
+.form-input::placeholder{color:var(--muted);}
+.btn-primary{width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:0.04em;transition:opacity 0.15s;margin-top:8px;}
+.btn-primary:hover{opacity:0.85;}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:var(--border);}
+.btn-google{width:100%;background:var(--bg3);color:var(--text);border:0.5px solid var(--border-bright);border-radius:8px;padding:13px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:border-color 0.15s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-google:hover{border-color:rgba(255,255,255,0.4);}
+.g-icon{width:18px;height:18px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4285f4;}
+.form-note{font-size:11px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;}
+.form-note a{color:var(--accent);text-decoration:none;}
+.invite-box{background:rgba(232,240,0,0.06);border:0.5px solid rgba(232,240,0,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#d4dc00;line-height:1.5;}
+@media(max-width:900px){.split{flex-direction:column;}.left{display:none;}.right{width:100%;padding:40px 24px;}}
+</style>
+</head>
+<body>
+<div class="split">
+  <div class="left">
+    <div class="logo"><div class="logo-dot"></div>MuscleBattle</div>
+    <div class="hero-tag">友達を倒すための筋トレSNS</div>
+    <div class="hero-title">筋トレを<br><span>競技</span>にする。</div>
+    <div class="hero-desc">ライバルと直接対決、リアルタイムランキング、煽り通知。記録するだけじゃ続かない。バトルするから続く。</div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">2,481</div><div class="stat-label">アクティブユーザー</div></div>
+      <div class="stat-item"><div class="stat-num">18,200</div><div class="stat-label">今週の総ボリューム(kg)</div></div>
+      <div class="stat-item"><div class="stat-num">94%</div><div class="stat-label">30日継続率</div></div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="logo" style="margin-bottom:36px"><div class="logo-dot"></div>MuscleBattle</div>
+
+    <div class="invite-box" id="invite-box" style="display:none">
+      🎉 タケシさんから招待されました！登録するとバトルが始まります。
+    </div>
+
+    <div class="tab-row">
+      <button class="tab active" onclick="switchTab(this,'login')">ログイン</button>
+      <button class="tab" onclick="switchTab(this,'register')">新規登録</button>
+    </div>
+
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">メールアドレス</label>
+        <input class="form-input" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">パスワード</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary">ログイン</button>
+      <div class="divider">または</div>
+      <button class="btn-google"><div class="g-icon">G</div>Googleでログイン</button>
+      <div class="form-note"><a href="#">パスワードを忘れた場合</a></div>
+    </div>
+
+    <div id="register-form" style="display:none">
+      <div class="form-group">
+        <label class="form-label">ユーザー名</label>
+        <input class="form-input" type="text" placeholder="ライバルに見える名前">
+      </div>
+      <div class="form-group">
+        <label class="form-label">メールアドレス</label>
+        <input class="form-input" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">パスワード</label>
+        <input class="form-input" type="password" placeholder="8文字以上">
+      </div>
+      <button class="btn-primary">無料で始める</button>
+      <div class="divider">または</div>
+      <button class="btn-google"><div class="g-icon">G</div>Googleで登録</button>
+      <div class="form-note">登録することで<a href="#">利用規約</a>・<a href="#">プライバシーポリシー</a>に同意します。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(el, key){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('login-form').style.display = key==='login'?'block':'none';
+  document.getElementById('register-form').style.display = key==='register'?'block':'none';
+}
+const p = new URLSearchParams(location.search);
+if(p.get('invite')) document.getElementById('invite-box').style.display='block';
+</script>
+</body>
+</html>
