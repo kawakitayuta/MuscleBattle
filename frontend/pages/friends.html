@@ -179,17 +179,68 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
   </div>
 </div>
 <script>
-function copyLink(){
-  navigator.clipboard.writeText(document.getElementById('inv-link').value);
-  const btn=document.querySelector('.btn-copy');
-  btn.textContent='コピー済み!';
-  setTimeout(()=>btn.textContent='コピー',1800);
+const MY_USER_ID = 1;
+
+// ===== フレンド一覧（API連携） =====
+async function loadFriends() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/ranking/today');
+    const data = await res.json();
+    const others = data.filter(d => d.rank !== MY_USER_ID);
+
+    const container = document.querySelector('.card .friend-card').parentElement;
+    container.innerHTML = others.map(d => `
+      <div class="friend-card slide">
+        <div class="fav" style="background:#2e2200;color:#f0c830">${d.name[0]}</div>
+        <div class="finfo">
+          <div class="fname">${d.name}</div>
+          <div class="fmeta">合計 ${d.total_reps}回</div>
+        </div>
+        <button class="btn-battle" onclick="location.href='battle.html'">バトルする</button>
+      </div>`).join('');
+  } catch (e) {
+    console.error('フレンド取得失敗:', e);
+  }
 }
+
+// ===== 活動フィード（API連携） =====
+async function loadFeed() {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/feed/${MY_USER_ID}`);
+    const data = await res.json();
+
+    const container = document.querySelector('.card .feed-row').parentElement;
+    container.innerHTML = data.map(d => `
+      <div class="feed-row feed-in">
+        <div class="feed-av" style="background:#0d3d28;color:#00c9a7">${d.name[0]}</div>
+        <div class="feed-body">
+          <div class="feed-text">
+            <span class="name">${d.name}</span>が${d.exercise}<span class="good">${d.reps}回</span>を記録
+          </div>
+          <div class="feed-time">さきほど</div>
+        </div>
+      </div>`).join('');
+  } catch (e) {
+    console.error('フィード取得失敗:', e);
+  }
+}
+
+// ===== 招待リンクコピー =====
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('inv-link').value);
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'コピー済み!';
+  setTimeout(() => btn.textContent = 'コピー', 1800);
+}
+
 // フレンドカード・フィードをずらしてスライドイン
-setTimeout(()=>{
-  document.querySelectorAll('.friend-card').forEach((el,i)=>setTimeout(()=>el.classList.add('slide'),i*80));
-  document.querySelectorAll('.feed-row').forEach((el,i)=>setTimeout(()=>el.classList.add('feed-in'),200+i*100));
-},100);
+setTimeout(() => {
+  document.querySelectorAll('.friend-card').forEach((el, i) => setTimeout(() => el.classList.add('slide'), i * 80));
+  document.querySelectorAll('.feed-row').forEach((el, i) => setTimeout(() => el.classList.add('feed-in'), 200 + i * 100));
+}, 100);
+
+loadFriends();
+loadFeed();
 </script>
 </body>
 </html>

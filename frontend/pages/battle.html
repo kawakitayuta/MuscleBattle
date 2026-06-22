@@ -165,36 +165,87 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
   </div>
 </div>
 <script>
-function tick(){
-  const end=new Date();end.setDate(end.getDate()+2);end.setHours(23,59,59);
-  const diff=end-new Date();
-  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-  document.getElementById('t-d').textContent=d;
-  document.getElementById('t-h').textContent=String(h).padStart(2,'0');
-  document.getElementById('t-m').textContent=String(m).padStart(2,'0');
-  document.getElementById('t-s').textContent=String(s).padStart(2,'0');
-}
-tick();setInterval(tick,1000);
+const MY_USER_ID = 1;
 
-// グラフ — 遅延してアニメーション
-const days=['月','火','水','木','金','土'];
-const you=[60,50,70,80,60,0],rival=[80,70,60,50,90,0];
-const max=Math.max(...you,...rival,1);
-const chart=document.getElementById('day-chart');
-days.forEach((d,i)=>{
-  const wrap=document.createElement('div');wrap.className='day-bar-wrap';
-  const bars=document.createElement('div');bars.className='day-bars';
-  const yb=document.createElement('div');yb.className='day-bar you';yb.style.height='3px';
-  const rb=document.createElement('div');rb.className='day-bar rival';rb.style.height='3px';
-  bars.appendChild(yb);bars.appendChild(rb);
-  const label=document.createElement('div');label.className='day-label';label.textContent=d;
-  wrap.appendChild(bars);wrap.appendChild(label);
+// ===== カウントダウン =====
+function tick() {
+  const end = new Date();
+  end.setDate(end.getDate() + 2);
+  end.setHours(23, 59, 59);
+  const diff = end - new Date();
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('t-d').textContent = d;
+  document.getElementById('t-h').textContent = String(h).padStart(2, '0');
+  document.getElementById('t-m').textContent = String(m).padStart(2, '0');
+  document.getElementById('t-s').textContent = String(s).padStart(2, '0');
+}
+tick();
+setInterval(tick, 1000);
+
+// ===== バトル情報（API連携） =====
+async function loadBattle() {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/battle/${MY_USER_ID}`);
+    const d = await res.json();
+    if (d.message) {
+      document.querySelector('.reversal-hint').textContent = d.message;
+      return;
+    }
+
+    // スコア更新
+    document.querySelector('.player-score.you').innerHTML =
+      `${d.my_score}<span class="score-unit">回</span>`;
+    document.querySelector('.player-score.rival').innerHTML =
+      `${d.rival_score}<span class="score-unit">回</span>`;
+
+    // ライバル名更新
+    document.querySelectorAll('.player-name')[1].textContent = d.rival_name;
+
+    // プログレスバー
+    setTimeout(() => {
+      document.querySelector('.battle-fill').style.width = d.my_pct + '%';
+    }, 900);
+
+    // パーセント表示
+    document.querySelector('.battle-pcts').innerHTML =
+      `<span>あなた ${d.my_pct}%</span><span>${d.rival_name} ${d.rival_pct}%</span>`;
+
+    // 逆転ヒント
+    const diff = d.rival_score - d.my_score;
+    document.querySelector('.reversal-hint').innerHTML = diff > 0
+      ? `あと <strong>${diff}回</strong> で逆転。今がチャンスです。`
+      : `<strong>あなたがリードしています！</strong> このまま逃げ切れ！`;
+
+  } catch (e) {
+    console.error('バトル取得失敗:', e);
+  }
+}
+
+// ===== 日別グラフ =====
+const days = ['月', '火', '水', '木', '金', '土'];
+const you = [60, 50, 70, 80, 60, 0];
+const rival = [80, 70, 60, 50, 90, 0];
+const max = Math.max(...you, ...rival, 1);
+const chart = document.getElementById('day-chart');
+days.forEach((d, i) => {
+  const wrap = document.createElement('div'); wrap.className = 'day-bar-wrap';
+  const bars = document.createElement('div'); bars.className = 'day-bars';
+  const yb = document.createElement('div'); yb.className = 'day-bar you'; yb.style.height = '3px';
+  const rb = document.createElement('div'); rb.className = 'day-bar rival'; rb.style.height = '3px';
+  bars.appendChild(yb); bars.appendChild(rb);
+  const label = document.createElement('div'); label.className = 'day-label'; label.textContent = d;
+  wrap.appendChild(bars); wrap.appendChild(label);
   chart.appendChild(wrap);
-  setTimeout(()=>{
-    yb.style.height=(you[i]/max*74+3)+'px';
-    rb.style.height=(rival[i]/max*74+3)+'px';
-  },800+i*80);
+  setTimeout(() => {
+    yb.style.height = (you[i] / max * 74 + 3) + 'px';
+    rb.style.height = (rival[i] / max * 74 + 3) + 'px';
+  }, 800 + i * 80);
 });
+
+loadBattle();
 </script>
 </body>
 </html>
