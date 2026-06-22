@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MuscleBattle — 統計</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#18181f;--bg2:#22222c;--bg3:#2c2c38;--border:rgba(255,255,255,0.10);--border-bright:rgba(255,255,255,0.22);--text:#f2f2f5;--muted:#a0a0b0;--accent:#e8f000;--accent2:#ff4f4f;--accent3:#00c9a7;--font:'Inter','Noto Sans JP',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes barGrow{from{height:0}to{height:var(--h)}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ringFill{from{stroke-dashoffset:283}to{stroke-dashoffset:var(--offset)}}
+
+.fade-up{opacity:0;animation:fadeUp 0.5s ease forwards;}
+.fade-up:nth-child(1){animation-delay:0.05s}.fade-up:nth-child(2){animation-delay:0.12s}
+.fade-up:nth-child(3){animation-delay:0.19s}.fade-up:nth-child(4){animation-delay:0.26s}
+.fade-up:nth-child(5){animation-delay:0.33s}.fade-up:nth-child(6){animation-delay:0.40s}
+.stat-num{opacity:0;animation:countUp 0.5s ease forwards;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;}
+.nav-logo{font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);display:flex;align-items:center;gap:10px;}
+.nav-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:0.04em;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
+.btn-record{background:var(--accent);color:#000;border:none;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:opacity 0.15s;}
+.btn-record:hover{opacity:0.85;}
+
+.page{max-width:1100px;margin:0 auto;padding:40px 40px 80px;}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:24px;font-weight:700;}
+.period-tabs{display:flex;gap:0;border:0.5px solid var(--border-bright);border-radius:8px;overflow:hidden;}
+.ptab{padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:var(--font);transition:all 0.15s;}
+.ptab.active{background:var(--bg3);color:var(--text);}
+
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+.card-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-label::after{content:'';flex:1;height:0.5px;background:var(--border);}
+
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.stat-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:20px;}
+.stat-label-sm{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;}
+.stat-big{font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:var(--text);}
+.stat-unit{font-size:13px;color:var(--muted);font-weight:400;margin-left:3px;}
+.stat-diff{font-size:11px;margin-top:6px;font-weight:600;}
+.stat-diff.up{color:var(--accent3);}
+.stat-diff.down{color:var(--accent2);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* 棒グラフ */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:160px;padding-bottom:24px;position:relative;}
+.bar-chart::after{content:'';position:absolute;bottom:24px;left:0;right:0;height:0.5px;background:var(--border);}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;}
+.bar-wrap{flex:1;display:flex;align-items:flex-end;width:100%;}
+.bar{width:100%;border-radius:4px 4px 0 0;min-height:3px;transition:height 1s cubic-bezier(0.22,1,0.36,1);}
+.bar.you{background:var(--text);}
+.bar.accent{background:var(--accent);}
+.bar-label{font-size:10px;color:var(--muted);white-space:nowrap;}
+.bar-val{font-size:10px;color:var(--muted);}
+
+/* 部位別ドーナツ */
+.donut-wrap{display:flex;align-items:center;gap:24px;}
+.donut-legend{display:flex;flex-direction:column;gap:10px;flex:1;}
+.leg-row{display:flex;align-items:center;gap:8px;}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.leg-name{font-size:12px;color:var(--muted);flex:1;}
+.leg-pct{font-size:13px;font-weight:600;color:var(--text);}
+.leg-bar-wrap{flex:1;height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-left:8px;}
+.leg-bar-fill{height:100%;border-radius:99px;width:0;transition:width 1s cubic-bezier(0.22,1,0.36,1);}
+
+/* 種目ベスト */
+.ex-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+.ex-row:last-child{border-bottom:none;}
+.ex-rank{font-size:12px;font-weight:700;color:var(--muted);width:20px;text-align:center;flex-shrink:0;}
+.ex-name{flex:1;font-size:13px;color:var(--text);font-weight:500;}
+.ex-val{font-size:13px;font-weight:700;color:var(--text);}
+.ex-diff{font-size:11px;color:var(--accent3);margin-left:6px;}
+
+/* ストリーク */
+.streak-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day{width:100%;aspect-ratio:1;border-radius:3px;background:var(--bg3);}
+.cal-day.done{background:var(--accent2);}
+.cal-day.today{background:var(--accent);border-radius:3px;}
+.cal-labels{display:flex;gap:4px;margin-bottom:4px;}
+.cal-label{flex:1;font-size:9px;color:var(--muted);text-align:center;}
+
+@media(max-width:900px){.grid4{grid-template-columns:1fr 1fr;}.grid2{grid-template-columns:1fr;}nav{padding:0 20px;}.page{padding:24px 20px 60px;}.nav-links{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo"><div class="nav-dot"></div>MuscleBattle</div>
+  <ul class="nav-links">
+    <li><a href="home.html">ホーム</a></li>
+    <li><a href="record.html">記録</a></li>
+    <li><a href="ranking.html">ランキング</a></li>
+    <li><a href="battle.html">バトル</a></li>
+    <li><a href="friends.html">フレンド</a></li>
+    <li><a href="#" class="active">統計</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-record" onclick="location.href='record.html'">+ 記録する</button>
+    <div class="nav-avatar">田</div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-head fade-up">
+    <div class="page-title">統計</div>
+    <div class="period-tabs">
+      <button class="ptab" onclick="switchPeriod(this,'week')">今週</button>
+      <button class="ptab active" onclick="switchPeriod(this,'month')">今月</button>
+      <button class="ptab" onclick="switchPeriod(this,'all')">全期間</button>
+    </div>
+  </div>
+
+  <!-- サマリーカード -->
+  <div class="grid4">
+    <div class="stat-card fade-up">
+      <div class="stat-label-sm">総ボリューム</div>
+      <div class="stat-big stat-num" style="animation-delay:0.2s" id="vol">31,200<span class="stat-unit">kg</span></div>
+      <div class="stat-diff up">▲ +271% 先月比</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-label-sm">総回数</div>
+      <div class="stat-big stat-num" style="animation-delay:0.3s">3,080<span class="stat-unit">回</span></div>
+      <div class="stat-diff up">▲ +320% 先月比</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-label-sm">運動日数</div>
+      <div class="stat-big stat-num" style="animation-delay:0.4s">18<span class="stat-unit">日</span></div>
+      <div class="stat-diff up">▲ +6日 先月比</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-label-sm">最長ストリーク</div>
+      <div class="stat-big stat-num" style="animation-delay:0.5s" style="color:var(--accent2)">18<span class="stat-unit">日</span></div>
+      <div class="stat-diff up">🔥 継続中</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <!-- 週別ボリュームグラフ -->
+    <div class="card fade-up">
+      <div class="card-label">週別ボリューム</div>
+      <div class="bar-chart" id="vol-chart"></div>
+      <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:4px;">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--text);border-radius:2px;display:inline-block"></span>ボリューム</span>
+      </div>
+    </div>
+
+    <!-- 部位別割合 -->
+    <div class="card fade-up">
+      <div class="card-label">部位別トレーニング割合</div>
+      <div class="donut-legend" id="donut-legend"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <!-- 種目別ベスト -->
+    <div class="card fade-up">
+      <div class="card-label">種目別 今月の記録</div>
+      <div class="ex-row"><span class="ex-rank">1</span><span class="ex-name">腕立て伏せ</span><span class="ex-val">2,100回<span class="ex-diff">+320%</span></span></div>
+      <div class="ex-row"><span class="ex-rank">2</span><span class="ex-name">スクワット</span><span class="ex-val">980回<span class="ex-diff">+390%</span></span></div>
+      <div class="ex-row"><span class="ex-rank">3</span><span class="ex-name">懸垂</span><span class="ex-val">120回<span class="ex-diff">+180%</span></span></div>
+      <div class="ex-row"><span class="ex-rank">4</span><span class="ex-name">腹筋</span><span class="ex-val">680回<span class="ex-diff">+210%</span></span></div>
+      <div class="ex-row"><span class="ex-rank">5</span><span class="ex-name">デッドリフト</span><span class="ex-val">200回<span class="ex-diff">+90%</span></span></div>
+    </div>
+
+    <!-- ストリークカレンダー -->
+    <div class="card fade-up">
+      <div class="card-label">今月の継続カレンダー</div>
+      <div class="cal-labels" id="cal-labels"></div>
+      <div class="streak-calendar" id="streak-cal"></div>
+      <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--muted);">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--accent2);border-radius:2px;display:inline-block"></span>運動した</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--accent);border-radius:2px;display:inline-block"></span>今日</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--bg3);border-radius:2px;display:inline-block"></span>休み</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 週別ボリュームグラフ
+const weeks=['4週前','3週前','2週前','先週','今週'];
+const vols=[4200,6800,8100,9400,10200];
+const maxV=Math.max(...vols);
+const chart=document.getElementById('vol-chart');
+weeks.forEach((w,i)=>{
+  const col=document.createElement('div');col.className='bar-col';
+  const wrap=document.createElement('div');wrap.className='bar-wrap';
+  const bar=document.createElement('div');
+  bar.className='bar '+(i===4?'accent':'you');
+  bar.style.height='3px';
+  const label=document.createElement('div');label.className='bar-label';label.textContent=w;
+  const val=document.createElement('div');val.className='bar-val';val.textContent=(vols[i]/1000).toFixed(1)+'k';
+  wrap.appendChild(bar);col.appendChild(wrap);col.appendChild(label);
+  chart.appendChild(col);
+  setTimeout(()=>{bar.style.height=(vols[i]/maxV*130+3)+'px';},400+i*80);
+});
+
+// 部位別
+const parts=[
+  {name:'胸（プッシュ系）',pct:38,color:'#e8f000'},
+  {name:'脚（スクワット系）',pct:28,color:'#00c9a7'},
+  {name:'体幹（腹筋系）',pct:18,color:'#5badff'},
+  {name:'背中（プル系）',pct:10,color:'#c080c0'},
+  {name:'その他',pct:6,color:'#888780'},
+];
+const legend=document.getElementById('donut-legend');
+parts.forEach(p=>{
+  const row=document.createElement('div');row.className='leg-row';
+  row.innerHTML=`
+    <div class="leg-dot" style="background:${p.color}"></div>
+    <span class="leg-name">${p.name}</span>
+    <div class="leg-bar-wrap"><div class="leg-bar-fill" style="background:${p.color}" data-w="${p.pct}"></div></div>
+    <span class="leg-pct">${p.pct}%</span>`;
+  legend.appendChild(row);
+});
+setTimeout(()=>{
+  document.querySelectorAll('.leg-bar-fill').forEach(el=>{el.style.width=el.dataset.w+'%';});
+},500);
+
+// カレンダー
+const dayLabels=['日','月','火','水','木','金','土'];
+const calLabels=document.getElementById('cal-labels');
+dayLabels.forEach(d=>{
+  const el=document.createElement('div');el.className='cal-label';el.textContent=d;
+  calLabels.appendChild(el);
+});
+const cal=document.getElementById('streak-cal');
+const today=new Date().getDate();
+const daysInMonth=30;
+// 6/1は日曜日スタートと仮定
+const startOffset=0;
+for(let i=0;i<startOffset;i++){
+  const el=document.createElement('div');el.style.background='transparent';cal.appendChild(el);
+}
+for(let i=1;i<=daysInMonth;i++){
+  const el=document.createElement('div');el.className='cal-day';
+  if(i===today)el.classList.add('today');
+  else if(i<today&&Math.random()>0.25)el.classList.add('done');
+  cal.appendChild(el);
+}
+
+// 期間切り替え
+function switchPeriod(el,key){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
