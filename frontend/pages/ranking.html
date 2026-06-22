@@ -114,95 +114,82 @@ nav{position:sticky;top:0;z-index:100;background:rgba(24,24,31,0.94);backdrop-fi
   <div class="rank-card" id="rank-list"></div>
 </div>
 <script>
-const DATA={
-  nara:{today:[
-    {r:1,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e2200',tc:'#f0c830'},
-    {r:2,n:'ユウタ',i:'ユ',s:180,streak:8,bg:'#2a2a2a',tc:'#c0bfbe'},
-    {r:3,n:'ケン',i:'ケ',s:150,streak:5,bg:'#2e1a0a',tc:'#cc7a44'},
-    {r:4,n:'ショウ',i:'シ',s:130,streak:3,bg:'#1a2a2a',tc:'#00c9a7'},
-    {r:5,n:'リョウ',i:'リ',s:110,streak:7,bg:'#1e1a2e',tc:'#9090e0'},
-    {r:8,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
-  ],mypos:'#8位 — 60回'},
-  nation:{today:[
-    {r:1,n:'山本',i:'山',s:410,streak:22,bg:'#2e2200',tc:'#f0c830'},
-    {r:2,n:'中村',i:'中',s:390,streak:15,bg:'#2a2a2a',tc:'#c0bfbe'},
-    {r:3,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e1a0a',tc:'#cc7a44'},
-    {r:4,n:'鈴木',i:'鈴',s:220,streak:9,bg:'#1a2a2a',tc:'#00c9a7'},
-    {r:42,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
-  ],mypos:'#42位 — 60回'},
-  age:{today:[
-    {r:1,n:'タケシ',i:'タ',s:230,streak:12,bg:'#2e2200',tc:'#f0c830'},
-    {r:2,n:'ユウタ',i:'ユ',s:180,streak:8,bg:'#2a2a2a',tc:'#c0bfbe'},
-    {r:3,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
-  ],mypos:'#3位 — 60回'},
-  new:{today:[
-    {r:1,n:'ケン',i:'ケ',s:150,streak:5,bg:'#2e2200',tc:'#f0c830'},
-    {r:2,n:'田中（あなた）',i:'田',s:60,streak:18,bg:'#1e2a08',tc:'#e8f000',me:true},
-    {r:3,n:'リョウ',i:'リ',s:45,streak:3,bg:'#2a2a2a',tc:'#c0bfbe'},
-  ],mypos:'#2位 — 60回'},
-};
-let curFilter='nara',curPeriod='today';
-const colors=['#c0bfbe','#f0c830','#cc7a44'];
-const labels=['2位','1位','3位'];
-const order=[1,0,2];
-const sizes=[44,56,44];
-const heights=[64,88,52];
-const nc=['','g','s','b'];
+let curFilter = 'nara', curPeriod = 'today';
+const nc = ['', 'g', 's', 'b'];
 
-function getRows(){return DATA[curFilter][curPeriod]||DATA[curFilter].today;}
+// ===== APIからランキングを取得 =====
+async function fetchRanking() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/ranking');
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error('API取得失敗:', e);
+    return [];
+  }
+}
 
-function renderPodium(rows){
-  const top3=rows.slice(0,3);
-  document.getElementById('podium').innerHTML=order.map(idx=>{
-    const d=top3[idx];if(!d)return '';
+function renderPodium(rows) {
+  const top3 = rows.slice(0, 3);
+  const order = [1, 0, 2];
+  const colors = ['#c0bfbe', '#f0c830', '#cc7a44'];
+  const labels = ['2位', '1位', '3位'];
+  const sizes = [44, 56, 44];
+  const heights = [64, 88, 52];
+  document.getElementById('podium').innerHTML = order.map(idx => {
+    const d = top3[idx]; if (!d) return '';
     return `<div class="podium-item" style="opacity:0">
-      <div class="podium-av" style="width:${sizes[idx]}px;height:${sizes[idx]}px;background:${d.bg};color:${d.tc};font-size:${Math.floor(sizes[idx]*0.35)}px">${d.i}</div>
-      <div class="podium-name">${d.n}</div>
-      <div class="podium-score">${d.s}回</div>
+      <div class="podium-av" style="width:${sizes[idx]}px;height:${sizes[idx]}px;background:#2e2200;color:#f0c830;font-size:${Math.floor(sizes[idx]*0.35)}px">${d.name[0]}</div>
+      <div class="podium-name">${d.name}</div>
+      <div class="podium-score">${d.total_reps}回</div>
       <div class="podium-stand" style="width:90px;height:${heights[idx]}px;background:${colors[idx]}20;border:0.5px solid ${colors[idx]}40;color:${colors[idx]}">
         <span class="podium-rank">${labels[idx]}</span>
       </div>
     </div>`;
   }).join('');
-  // 少しずらしてアニメーション
-  document.querySelectorAll('.podium-item').forEach((el,i)=>{
-    setTimeout(()=>el.classList.add('rise'),100+i*120);
+  document.querySelectorAll('.podium-item').forEach((el, i) => {
+    setTimeout(() => el.classList.add('rise'), 100 + i * 120);
   });
 }
 
-function renderList(rows){
-  const rest=rows.slice(3);
-  document.getElementById('rank-list').innerHTML=rest.map(d=>`
-    <div class="rank-row${d.me?' me':''}">
-      <span class="rnum ${nc[d.r]||''}">${d.r}</span>
-      <div class="rav" style="background:${d.bg};color:${d.tc}">${d.i}</div>
+function renderList(rows) {
+  const rest = rows.slice(3);
+  document.getElementById('rank-list').innerHTML = rest.map((d, i) => `
+    <div class="rank-row">
+      <span class="rnum">${d.rank}</span>
+      <div class="rav" style="background:#2a2a2a;color:#c0c0c0">${d.name[0]}</div>
       <div class="rinfo">
-        <div class="rname">${d.n}${d.me?'<span class="rme-tag">あなた</span>':''}</div>
-        <div class="rsub">🔥 ${d.streak}日連続</div>
+        <div class="rname">${d.name}</div>
       </div>
       <div class="rscore-col">
-        <div class="rscore">${d.s}回</div>
-        <div class="rscore-label">今日</div>
+        <div class="rscore">${d.total_reps}回</div>
+        <div class="rscore-label">合計</div>
       </div>
     </div>`).join('');
-  document.querySelectorAll('.rank-row').forEach((el,i)=>{
-    setTimeout(()=>el.classList.add('slide'),i*60);
+  document.querySelectorAll('.rank-row').forEach((el, i) => {
+    setTimeout(() => el.classList.add('slide'), i * 60);
   });
 }
 
-function render(){
-  const rows=getRows();
-  document.getElementById('mypos').textContent=DATA[curFilter].mypos;
-  renderPodium(rows);renderList(rows);
+async function render() {
+  const rows = await fetchRanking();
+  document.getElementById('mypos').textContent =
+    rows.length > 0 ? `#${rows.length}位 — ${rows[rows.length-1]?.total_reps}回` : 'データなし';
+  renderPodium(rows);
+  renderList(rows);
 }
-function switchFilter(el,key){
-  document.querySelectorAll('#filter-chips .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');curFilter=key;render();
+
+function switchFilter(el, key) {
+  document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  render();
 }
-function switchPeriod(el,key){
-  document.querySelectorAll('.tabs-row .tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');curPeriod=key;render();
+function switchPeriod(el, key) {
+  document.querySelectorAll('.tabs-row .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
 }
+
 render();
 </script>
 </body>
