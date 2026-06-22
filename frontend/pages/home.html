@@ -412,7 +412,9 @@
 </div>
 
 <script>
-  /* ① ストリークバー */
+  const MY_USER_ID = 1; // 自分のユーザーID
+
+  /* ===== ストリークバー ===== */
   const bar = document.getElementById('streak-bar');
   for (let i = 0; i < 10; i++) {
     const d = document.createElement('div');
@@ -420,78 +422,107 @@
     bar.appendChild(d);
   }
 
-  /* ② ストリーク数字カウントアップ */
+  /* ===== ストリーク数字カウントアップ ===== */
   const TARGET = 18;
   const streakEl = document.getElementById('streak-num');
   let current = 0;
-  const duration = 900;
-  const step = duration / TARGET;
   const timer = setInterval(() => {
     current++;
     streakEl.textContent = current;
     streakEl.classList.remove('pop');
-    void streakEl.offsetWidth; // reflow
+    void streakEl.offsetWidth;
     streakEl.classList.add('pop');
     if (current >= TARGET) clearInterval(timer);
-  }, step);
+  }, 900 / TARGET);
 
-  /* ③ バトルプログレスバー — 少し遅らせてアニメーション */
-  setTimeout(() => {
-    document.getElementById('battle-fill').style.width = '48%';
-  }, 400);
+  /* ===== ① 今日のランキング（API連携） ===== */
+  async function fetchRanking() {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/ranking/today');
+      return await res.json();
+    } catch (e) {
+      console.error('ランキング取得失敗:', e);
+      return [];
+    }
+  }
 
-  /* ④ ミッションバー */
-  setTimeout(() => {
-    document.querySelectorAll('.mfill').forEach(el => {
-      el.style.width = el.dataset.width + '%';
-    });
-  }, 600);
-
-  /* ⑤ ランキング */
-  const RANKS = {
-    nara: [
-      {r:1,n:'タケシ',s:230,bg:'#2e2200',tc:'#f0c830'},
-      {r:2,n:'ユウタ',s:180,bg:'#2a2a2a',tc:'#c0c0c0'},
-      {r:3,n:'ケン',s:150,bg:'#2e1a0a',tc:'#cc7a44'},
-      {r:8,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
-    ],
-    nation: [
-      {r:1,n:'山本',s:410,bg:'#2e2200',tc:'#f0c830'},
-      {r:2,n:'中村',s:390,bg:'#2a2a2a',tc:'#c0c0c0'},
-      {r:3,n:'タケシ',s:230,bg:'#2e1a0a',tc:'#cc7a44'},
-      {r:42,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
-    ],
-    age: [
-      {r:1,n:'タケシ',s:230,bg:'#2e2200',tc:'#f0c830'},
-      {r:2,n:'ユウタ',s:180,bg:'#2a2a2a',tc:'#c0c0c0'},
-      {r:3,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
-    ],
-    new: [
-      {r:1,n:'ケン',s:150,bg:'#2e2200',tc:'#f0c830'},
-      {r:2,n:'田中（あなた）',s:60,bg:'#1e2a08',tc:'#e8f000',me:true},
-      {r:3,n:'リョウ',s:45,bg:'#2a2a2a',tc:'#c0c0c0'},
-    ],
-  };
-  const nc = ['','g','s','b'];
-
-  function renderRank(key) {
-    const list = document.getElementById('rank-list');
-    list.innerHTML = RANKS[key].map(d => `
-      <div class="rank-row${d.me ? ' me' : ''}">
-        <span class="rnum ${nc[d.r] || ''}">${d.r}</span>
-        <div class="rav" style="background:${d.bg};color:${d.tc}">${d.n[0]}</div>
-        <span class="rname">${d.n}${d.me ? '<span class="rme-tag">あなた</span>' : ''}</span>
-        <span class="rscore">${d.s}回</span>
+  function renderRank(rows) {
+    const nc = ['', 'g', 's', 'b'];
+    document.getElementById('rank-list').innerHTML = rows.map(d => `
+      <div class="rank-row${d.rank === MY_USER_ID ? ' me' : ''}">
+        <span class="rnum ${nc[d.rank] || ''}">${d.rank}</span>
+        <div class="rav" style="background:#2e2200;color:#f0c830">${d.name[0]}</div>
+        <span class="rname">${d.name}</span>
+        <span class="rscore">${d.total_reps}回</span>
       </div>`).join('');
   }
 
   function switchRank(el, key) {
     document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
-    renderRank(key);
+    loadRanking();
   }
 
-  renderRank('nara');
+  async function loadRanking() {
+    const rows = await fetchRanking();
+    renderRank(rows);
+  }
+
+  /* ===== ② バトル情報（API連携） ===== */
+  async function loadBattle() {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/battle/${MY_USER_ID}`);
+      const d = await res.json();
+      if (d.message) return;
+
+      document.querySelector('.bp-score.losing').innerHTML =
+        `${d.my_score}<span class="bp-unit">回</span>`;
+      document.querySelector('.bp-score.winning').innerHTML =
+        `${d.rival_score}<span class="bp-unit">回</span>`;
+      document.querySelector('.bp-label:last-of-type').textContent = d.rival_name;
+      document.querySelector('.battle-meta').innerHTML =
+        `<span>あなた ${d.my_pct}%</span><span>タケシ ${d.rival_pct}%</span>`;
+
+      setTimeout(() => {
+        document.getElementById('battle-fill').style.width = d.my_pct + '%';
+      }, 400);
+    } catch (e) {
+      console.error('バトル取得失敗:', e);
+    }
+  }
+
+  /* ===== ③ フィード（API連携） ===== */
+  async function loadFeed() {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/feed/${MY_USER_ID}`);
+      const data = await res.json();
+      const container = document.querySelector('.card .feed-row').parentElement;
+      container.innerHTML = data.map(d => `
+        <div class="feed-row">
+          <div class="fav" style="background:#0d3d28;color:#00c9a7">${d.name[0]}</div>
+          <div>
+            <div class="feed-text">
+              <span class="name">${d.name}</span>が${d.exercise}${d.reps}回を記録
+            </div>
+            <div class="feed-time">さきほど</div>
+          </div>
+        </div>`).join('');
+    } catch (e) {
+      console.error('フィード取得失敗:', e);
+    }
+  }
+
+  /* ===== ミッションバー ===== */
+  setTimeout(() => {
+    document.querySelectorAll('.mfill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 600);
+
+  /* ===== 全部ロード ===== */
+  loadRanking();
+  loadBattle();
+  loadFeed();
 </script>
 </body>
 </html>

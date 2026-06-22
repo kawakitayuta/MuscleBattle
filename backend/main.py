@@ -83,3 +83,71 @@ def get_workouts(user_id: int):
     workouts = db.query(Workout).filter(Workout.user_id == user_id).all()
     db.close()
     return [{"exercise": w.exercise, "reps": w.reps} for w in workouts]
+
+# 今日のランキング
+@app.get("/ranking/today")
+def get_ranking_today():
+    db = SessionLocal()
+    results = db.query(
+        Workout.user_id,
+        User.name,
+        func.sum(Workout.reps).label("total")
+    ).join(User, User.id == Workout.user_id)\
+     .group_by(Workout.user_id)\
+     .order_by(func.sum(Workout.reps).desc())\
+     .limit(10)\
+     .all()
+    db.close()
+    return [
+        {"rank": i+1, "name": r.name, "total_reps": r.total}
+        for i, r in enumerate(results)
+    ]
+
+# バトル情報
+@app.get("/battle/{user_id}")
+def get_battle(user_id: int):
+    db = SessionLocal()
+    me = db.query(
+        func.sum(Workout.reps).label("total")
+    ).filter(Workout.user_id == user_id).scalar() or 0
+
+    rival = db.query(
+        User.name,
+        func.sum(Workout.reps).label("total")
+    ).join(Workout, Workout.user_id == User.id)\
+     .filter(User.id != user_id)\
+     .group_by(User.id)\
+     .order_by(func.sum(Workout.reps).desc())\
+     .first()
+    db.close()
+
+    if not rival:
+        return {"message": "ライバルがいません"}
+
+    total = me + rival.total
+    return {
+        "my_score": me,
+        "rival_name": rival.name,
+        "rival_score": rival.total,
+        "my_pct": round(me / total * 100) if total > 0 else 0,
+        "rival_pct": round(rival.total / total * 100) if total > 0 else 0,
+    }
+
+# フィード（フレンドの活動）
+@app.get("/feed/{user_id}")
+def get_feed(user_id: int):
+    db = SessionLocal()
+    workouts = db.query(
+        User.name,
+        Workout.exercise,
+        Workout.reps,
+    ).join(User, User.id == Workout.user_id)\
+     .filter(User.id != user_id)\
+     .order_by(Workout.id.desc())\
+     .limit(5)\
+     .all()
+    db.close()
+    return [
+        {"name": w.name, "exercise": w.exercise, "reps": w.reps}
+        for w in workouts
+    ]
