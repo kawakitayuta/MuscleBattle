@@ -1,8 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
+SECRET_KEY = "musclebattle-secret-key"
+ALGORITHM = "HS256"
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 app = FastAPI()
 
@@ -21,9 +29,10 @@ SessionLocal = sessionmaker(bind=engine)
 # ===== テーブル定義 =====
 class User(Base):
     __tablename__ = "users"
-    id     = Column(Integer, primary_key=True)
-    name   = Column(String)
-    streak = Column(Integer, default=0)
+    id       = Column(Integer, primary_key=True)
+    name     = Column(String)
+    password = Column(String)
+    streak   = Column(Integer, default=0)
 
 class Workout(Base):
     __tablename__ = "workouts"
@@ -155,3 +164,41 @@ def get_feed(user_id: int):
         {"name": w.name, "exercise": w.exercise, "reps": w.reps}
         for w in workouts
     ]
+
+# ===== 認証 =====
+
+# ユーザー登録（パスワード付き）
+@app.post("/register")
+def register(name: str, password: str):
+    db = SessionLocal()
+    hashed = pwd_context.hash(password)
+    user = User(name=name, password=hashed, streak=0)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    db.close()
+    return {"id": user.id, "name": user.name, "message": "登録しました！"}
+
+# ログイン
+@app.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    db = SessionLocal()
+    user = db.query(User).filter(User.name == form_data.username).first()
+    db.close()
+    if not user or not pwd_context.verify(form_data.password, user.password):
+        raise HTTPException(status_code=401, detail="名前またはパスワードが違います")
+    token = jwt.encode({"user_id": user.id, "name": user.name}, SECRET_KEY, algorithm=ALGORITHM)
+    return {"access_token": token, "token_type": "bearer", "user_id": user.id, "name": user.name}
+
+# トークン確認
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="無効なトークンです")
+
+# 自分のプロフィール（要認証）
+@app.get("/me")
+def get_me(current_user: dict = Depends(get_current_user)):
+    return {"user_id": current_user["user_id"], "name": current_user["name"]}
