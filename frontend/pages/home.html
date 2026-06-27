@@ -438,7 +438,7 @@
   /* ===== ① 今日のランキング（API連携） ===== */
   async function fetchRanking() {
     try {
-      const res = await fetch('http://127.0.0.1:8000/ranking/today');
+      const res = await fetch('https://musclebattle-api.onrender.com/ranking/today');
       return await res.json();
     } catch (e) {
       console.error('ランキング取得失敗:', e);
@@ -471,7 +471,7 @@
   /* ===== ② バトル情報（API連携） ===== */
   async function loadBattle() {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/battle/${MY_USER_ID}`);
+      const res = await fetch(`https://musclebattle-api.onrender.com/battle/${MY_USER_ID}`);
       const d = await res.json();
       if (d.message) return;
 
@@ -494,7 +494,7 @@
   /* ===== ③ フィード（API連携） ===== */
   async function loadFeed() {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/feed/${MY_USER_ID}`);
+      const res = await fetch(`https://musclebattle-api.onrender.com/feed/${MY_USER_ID}`);
       const data = await res.json();
       const container = document.querySelector('.card .feed-row').parentElement;
       container.innerHTML = data.map(d => `

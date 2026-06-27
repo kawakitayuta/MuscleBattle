@@ -188,7 +188,7 @@ setInterval(tick, 1000);
 // ===== バトル情報（API連携） =====
 async function loadBattle() {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/battle/${MY_USER_ID}`);
+    const res = await fetch(`https://musclebattle-api.onrender.com/battle/${MY_USER_ID}`);
     const d = await res.json();
     if (d.message) {
       document.querySelector('.reversal-hint').textContent = d.message;

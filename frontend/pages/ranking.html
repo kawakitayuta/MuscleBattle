@@ -120,7 +120,7 @@ const nc = ['', 'g', 's', 'b'];
 // ===== APIからランキングを取得 =====
 async function fetchRanking() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/ranking');
+    const res = await fetch('https://musclebattle-api.onrender.com/ranking');
     const data = await res.json();
     return data;
   } catch (e) {

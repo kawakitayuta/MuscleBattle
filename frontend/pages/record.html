@@ -195,7 +195,7 @@ async function save() {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/workout?user_id=1&exercise=${encodeURIComponent(exercise)}&reps=${totalReps}`,
+      `https://musclebattle-api.onrender.com/workout?user_id=1&exercise=${encodeURIComponent(exercise)}&reps=${totalReps}`,
       { method: 'POST' }
     );
     const data = await res.json();
